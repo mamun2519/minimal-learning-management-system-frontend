@@ -8,7 +8,7 @@ import { Upload, X, FileText, DollarSign, Type, FileUp } from "lucide-react";
 import { useCreateCourseMutation } from "@/redux/api/courseApi";
 import axios from "axios";
 import { URL } from "@/constants/url";
-
+import Swal from "sweetalert2";
 interface CourseFormData {
   title: string;
   price: number;
@@ -90,15 +90,21 @@ const AddNewCourse = () => {
 
       if (result.data.success) {
         console.log("Course created successfully:", result);
-
+        Swal.fire({
+          title: "Success",
+          text: "Course created successfully!",
+          icon: "success",
+        });
         // Reset form after successful submission
         reset();
         setSelectedFile(null);
-        alert("Course uploaded successfully!");
       }
     } catch (error) {
-      console.error("Upload failed:", error);
-      alert("Upload failed. Please try again.");
+      Swal.fire({
+        title: "Error",
+        text: "Failed to create course. Please try again.",
+        icon: "error",
+      });
     }
   };
 
