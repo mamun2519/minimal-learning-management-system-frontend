@@ -6,11 +6,11 @@ interface SearchBarProps {
   placeholder?: string;
 }
 
-function SearchBar({
+const SearchBar = ({
   value,
   onChange,
   placeholder = "Search courses...",
-}: SearchBarProps) {
+}: SearchBarProps) => {
   return (
     <div className="relative max-w-md mx-auto">
       <div className="absolute  left-0 top-2.5 pl-3 flex items-center ">
@@ -25,5 +25,5 @@ function SearchBar({
       />
     </div>
   );
-}
+};
 export default SearchBar;

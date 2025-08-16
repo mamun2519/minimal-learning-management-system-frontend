@@ -1,5 +1,6 @@
 import { Star, Clock, Users, BookOpen } from "lucide-react";
 import PrimaryButton from "../ui/PrimaryButton";
+import Image from "next/image";
 
 interface CourseCardProps {
   title: string;
@@ -26,18 +27,23 @@ function Courses({
 }: CourseCardProps) {
   return (
     <div className="group relative bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-      {/* Category Badge */}
+      {/* Category Badge
       <div className="absolute top-4 left-4 z-10">
         <span className="bg-primary text-primary-foreground text-xs font-medium px-2 py-1 rounded-full flex items-center gap-1">
           <BookOpen className="h-3 w-3" />
           {category}
         </span>
-      </div>
+      </div> */}
 
       {/* Instructor Image */}
       <div className="relative h-48 bg-muted overflow-hidden">
-        <img
-          src={instructorImage || "/placeholder.svg"}
+        <Image
+          width={200}
+          height={400}
+          src={
+            instructorImage ||
+            "https://media.geeksforgeeks.org/wp-content/uploads/20230629123647/Best-C-Programming-Courses-For-Beginners.png"
+          }
           alt={instructor}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />

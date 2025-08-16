@@ -14,7 +14,8 @@ export default function InToCourse() {
     {
       title: "Complete Web Development Bootcamp",
       instructor: "Sarah Johnson",
-      instructorImage: "/placeholder.svg?height=200&width=400",
+      instructorImage:
+        "https://media.geeksforgeeks.org/wp-content/uploads/20230629123647/Best-C-Programming-Courses-For-Beginners.png",
       rating: 4.8,
       reviewCount: 12543,
       price: 89,
@@ -26,7 +27,8 @@ export default function InToCourse() {
     {
       title: "UI/UX Design Masterclass",
       instructor: "Michael Chen",
-      instructorImage: "/placeholder.svg?height=200&width=400",
+      instructorImage:
+        "https://media.geeksforgeeks.org/wp-content/uploads/20230629123647/Best-C-Programming-Courses-For-Beginners.png",
       rating: 4.9,
       reviewCount: 8721,
       price: 79,
@@ -38,7 +40,8 @@ export default function InToCourse() {
     {
       title: "Data Science with Python",
       instructor: "Dr. Emily Rodriguez",
-      instructorImage: "/placeholder.svg?height=200&width=400",
+      instructorImage:
+        "https://media.geeksforgeeks.org/wp-content/uploads/20230629123647/Best-C-Programming-Courses-For-Beginners.png",
       rating: 4.7,
       reviewCount: 15632,
       price: 99,
@@ -50,7 +53,8 @@ export default function InToCourse() {
     {
       title: "Digital Marketing Strategy",
       instructor: "James Wilson",
-      instructorImage: "/placeholder.svg?height=200&width=400",
+      instructorImage:
+        "https://media.geeksforgeeks.org/wp-content/uploads/20230629123647/Best-C-Programming-Courses-For-Beginners.png",
       rating: 4.6,
       reviewCount: 9876,
       price: 69,
@@ -62,7 +66,8 @@ export default function InToCourse() {
     {
       title: "React Native Mobile Development",
       instructor: "Alex Thompson",
-      instructorImage: "/placeholder.svg?height=200&width=400",
+      instructorImage:
+        "https://media.geeksforgeeks.org/wp-content/uploads/20230629123647/Best-C-Programming-Courses-For-Beginners.png",
       rating: 4.5,
       reviewCount: 6543,
       price: 95,
@@ -74,7 +79,8 @@ export default function InToCourse() {
     {
       title: "Machine Learning Fundamentals",
       instructor: "Dr. Lisa Park",
-      instructorImage: "/placeholder.svg?height=200&width=400",
+      instructorImage:
+        "https://media.geeksforgeeks.org/wp-content/uploads/20230629123647/Best-C-Programming-Courses-For-Beginners.png",
       rating: 4.8,
       reviewCount: 11234,
       price: 109,
@@ -86,7 +92,8 @@ export default function InToCourse() {
     {
       title: "Cloud Computing with AWS",
       instructor: "Robert Kim",
-      instructorImage: "/placeholder.svg?height=200&width=400",
+      instructorImage:
+        "https://media.geeksforgeeks.org/wp-content/uploads/20230629123647/Best-C-Programming-Courses-For-Beginners.png",
       rating: 4.7,
       reviewCount: 8765,
       price: 89,
@@ -98,7 +105,8 @@ export default function InToCourse() {
     {
       title: "Cybersecurity Essentials",
       instructor: "Maria Garcia",
-      instructorImage: "/placeholder.svg?height=200&width=400",
+      instructorImage:
+        "https://media.geeksforgeeks.org/wp-content/uploads/20230629123647/Best-C-Programming-Courses-For-Beginners.png",
       rating: 4.6,
       reviewCount: 7890,
       price: 79,
@@ -110,7 +118,8 @@ export default function InToCourse() {
     {
       title: "Blockchain Development",
       instructor: "David Lee",
-      instructorImage: "/placeholder.svg?height=200&width=400",
+      instructorImage:
+        "https://media.geeksforgeeks.org/wp-content/uploads/20230629123647/Best-C-Programming-Courses-For-Beginners.png",
       rating: 4.4,
       reviewCount: 5432,
       price: 119,
@@ -164,17 +173,6 @@ export default function InToCourse() {
             placeholder="Search courses, instructors, or categories..."
           />
         </div>
-
-        {/* Results Info */}
-        {searchQuery && (
-          <div className="mb-6">
-            <p className="text-muted-foreground text-center">
-              Found {filteredCourses.length} course
-              {filteredCourses.length !== 1 ? "s" : ""}
-              {searchQuery && ` for "${searchQuery}"`}
-            </p>
-          </div>
-        )}
 
         {/* Course Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

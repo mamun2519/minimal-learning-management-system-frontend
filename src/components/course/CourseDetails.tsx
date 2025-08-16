@@ -1,0 +1,293 @@
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Star,
+  Clock,
+  Users,
+  BookOpen,
+  ArrowLeft,
+  Trash2,
+  Globe,
+  Award,
+  PlayCircle,
+} from "lucide-react";
+import { Button } from "@mui/material";
+
+// Sample course data - in a real app this would come from an API
+const sampleCourses = [
+  {
+    id: "1",
+    title: "Complete Web Development Bootcamp",
+    instructor: "Sarah Johnson",
+    instructorImage:
+      "https://media.geeksforgeeks.org/wp-content/uploads/20230629123647/Best-C-Programming-Courses-For-Beginners.png",
+    instructorBio:
+      "Senior Full Stack Developer with 8+ years of experience at top tech companies. Passionate about teaching and helping students launch their careers in web development.",
+    instructorExperience: "8+ years",
+    instructorStudents: "45,000+",
+    rating: 4.8,
+    reviewCount: 12543,
+    price: 89,
+    originalPrice: 199,
+    description:
+      "Learn modern web development from scratch. Build real projects with HTML, CSS, JavaScript, React, and Node.js.",
+    category: "Web Development",
+    duration: "42 hours",
+    lessons: 156,
+    level: "Beginner to Advanced",
+    language: "English",
+    lastUpdated: "December 2024",
+    whatYouLearn: [
+      "Build responsive websites with HTML5 and CSS3",
+      "Master JavaScript ES6+ and modern frameworks",
+      "Create dynamic web applications with React",
+      "Develop backend APIs with Node.js and Express",
+      "Work with databases and authentication",
+      "Deploy applications to production",
+    ],
+    requirements: [
+      "No prior programming experience required",
+      "A computer with internet connection",
+      "Willingness to learn and practice",
+    ],
+  },
+  // Add more courses as needed
+];
+
+const CourseDetails = ({ id }: { id: string }) => {
+  const router = useRouter();
+  const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
+
+  // Find course by ID - in a real app this would be an API call
+  const course = sampleCourses.find((c) => c.id === id) || sampleCourses[0];
+
+  const handleRemoveCourse = () => {
+    // In a real app, this would make an API call to remove the course
+    console.log("Removing course:", course.title);
+    setShowRemoveConfirm(false);
+    router.push("/");
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Back Button */}
+        <Button
+          //     variant="ghost"
+          onClick={() => router.back()}
+          className="mb-6 flex items-center gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Courses
+        </Button>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-2">
+            {/* Course Header */}
+            <div className="mb-8">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="bg-primary text-primary-foreground text-sm font-medium px-3 py-1 rounded-full flex items-center gap-1">
+                  <BookOpen className="h-4 w-4" />
+                  {course.category}
+                </span>
+                <span className="bg-muted text-muted-foreground text-sm px-3 py-1 rounded-full">
+                  {course.level}
+                </span>
+              </div>
+
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                {course.title}
+              </h1>
+
+              <p className="text-lg text-muted-foreground mb-6">
+                {course.description}
+              </p>
+
+              {/* Course Stats */}
+              <div className="flex flex-wrap items-center gap-6 mb-6">
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`w-5 h-5 ${
+                          i < Math.floor(course.rating)
+                            ? "fill-yellow-400 text-yellow-400"
+                            : "text-gray-300"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <span className="font-medium">{course.rating}</span>
+                  <span className="text-muted-foreground">
+                    ({course.reviewCount.toLocaleString()} reviews)
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1 text-muted-foreground">
+                  <Clock className="h-5 w-5" />
+                  <span>{course.duration}</span>
+                </div>
+
+                <div className="flex items-center gap-1 text-muted-foreground">
+                  <PlayCircle className="h-5 w-5" />
+                  <span>{course.lessons} lessons</span>
+                </div>
+
+                <div className="flex items-center gap-1 text-muted-foreground">
+                  <Globe className="h-5 w-5" />
+                  <span>{course.language}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* What You'll Learn */}
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold text-foreground mb-4">
+                What you'll learn
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {course.whatYouLearn.map((item, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                    <span className="text-foreground">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Requirements */}
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold text-foreground mb-4">
+                Requirements
+              </h2>
+              <ul className="space-y-2">
+                {course.requirements.map((req, index) => (
+                  <li key={index} className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-muted-foreground rounded-full mt-2 flex-shrink-0"></div>
+                    <span className="text-foreground">{req}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-8">
+              {/* Course Preview Card */}
+              <div className="bg-card border border-border rounded-lg p-6 mb-6">
+                <div className="relative mb-4">
+                  <img
+                    src={course.instructorImage || "/placeholder.svg"}
+                    alt={course.title}
+                    className="w-full h-48 object-cover rounded-lg"
+                  />
+                </div>
+
+                {/* Pricing */}
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="text-3xl font-bold text-primary">
+                    ${course.price}
+                  </span>
+                  {course.originalPrice && (
+                    <span className="text-lg text-muted-foreground line-through">
+                      ${course.originalPrice}
+                    </span>
+                  )}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="space-y-3 mb-6">
+                  <Button className="w-full bg-primary hover:bg-primary/90">
+                    Enroll Now
+                  </Button>
+                  <Button
+                    //   variant="destructive"
+                    className="w-full"
+                    onClick={() => setShowRemoveConfirm(true)}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Remove Course
+                  </Button>
+                </div>
+
+                {/* Course Info */}
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Duration:</span>
+                    <span className="font-medium">{course.duration}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Lessons:</span>
+                    <span className="font-medium">{course.lessons}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Level:</span>
+                    <span className="font-medium">{course.level}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Last Updated:</span>
+                    <span className="font-medium">{course.lastUpdated}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Instructor Info */}
+              <div className="bg-card border border-border rounded-lg p-6">
+                <h3 className="text-xl font-bold text-foreground mb-4">
+                  Instructor
+                </h3>
+
+                <div className="flex items-center gap-4 mb-4">
+                  <img
+                    src={course.instructorImage || "/placeholder.svg"}
+                    alt={course.instructor}
+                    className="w-16 h-16 rounded-full object-cover"
+                  />
+                  <div>
+                    <h4 className="font-bold text-foreground">
+                      {course.instructor}
+                    </h4>
+                    <p className="text-sm text-muted-foreground">
+                      Course Instructor
+                    </p>
+                  </div>
+                </div>
+
+                <p className="text-sm text-foreground mb-4">
+                  {course.instructorBio}
+                </p>
+
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="text-center">
+                    <div className="flex items-center justify-center gap-1 mb-1">
+                      <Award className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="font-bold text-foreground">
+                      {course.instructorExperience}
+                    </div>
+                    <div className="text-muted-foreground">Experience</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="flex items-center justify-center gap-1 mb-1">
+                      <Users className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="font-bold text-foreground">
+                      {course.instructorStudents}
+                    </div>
+                    <div className="text-muted-foreground">Students</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default CourseDetails;
