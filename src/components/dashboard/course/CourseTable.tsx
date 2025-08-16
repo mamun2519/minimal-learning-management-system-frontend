@@ -9,6 +9,8 @@ import DashboardSearchBar from "@/components/textInput/DashboardSearchBar";
 import DashboardTextSelector from "@/components/textInput/DashboardTextSelector";
 import TableHead from "@/components/table/TableHead";
 import CourseTableBody from "@/components/table/CourseTableBody";
+import Image from "next/image";
+import { Pagination } from "@mui/material";
 
 const CourseTable = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -74,10 +76,12 @@ const CourseTable = () => {
       {/* Mobile Card View */}
       <div className="lg:hidden">
         <div className="divide-y divide-border">
-          {coursesData.map((course: ICourse, index) => (
-            <div key={index} className="p-4">
+          {coursesData.map((course: ICourse) => (
+            <div key={course._id} className="p-4">
               <div className="flex items-start gap-4">
-                <img
+                <Image
+                  width={64}
+                  height={64}
                   src={course.file.url || "/placeholder.svg"}
                   alt={course.title}
                   className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
@@ -86,15 +90,12 @@ const CourseTable = () => {
                   <h3 className="font-medium text-card-foreground mb-1">
                     {course.title}
                   </h3>
-                  {/* <p className="text-sm text-muted-foreground mb-2">
-                    by {course.instructor}
-                  </p> */}
+
                   <div className="flex items-center gap-2 mb-3">
                     <span className="font-semibold text-card-foreground">
                       ${course.price}
                     </span>
                     <span className="text-sm text-muted-foreground line-through">
-                      {/* ${course.originalPrice} */}
                       $100
                     </span>
                   </div>
@@ -115,6 +116,17 @@ const CourseTable = () => {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* // Pagination */}
+      <div className="flex justify-center py-8">
+        <Pagination
+          count={totalPage}
+          onChange={handlePageChange}
+          page={data?.meta?.page || 1}
+          variant="outlined"
+          shape="rounded"
+        />
       </div>
     </div>
   );
