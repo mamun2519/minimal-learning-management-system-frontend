@@ -62,13 +62,6 @@ const CourseDetails = ({ id }: { id: string }) => {
   // Find course by ID - in a real app this would be an API call
   const course = sampleCourses.find((c) => c.id === id) || sampleCourses[0];
 
-  const handleRemoveCourse = () => {
-    // In a real app, this would make an API call to remove the course
-    console.log("Removing course:", course.title);
-    setShowRemoveConfirm(false);
-    router.push("/");
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -143,8 +136,35 @@ const CourseDetails = ({ id }: { id: string }) => {
               </div>
             </div>
 
+            {/* Instructor Info */}
+            <div className=" ">
+              <h3 className="text-xl font-bold text-foreground mb-4">
+                Instructor
+              </h3>
+
+              <div className="flex items-center gap-4 mb-4">
+                <img
+                  src={course.instructorImage || "/placeholder.svg"}
+                  alt={course.instructor}
+                  className="w-16 h-16 rounded-full object-cover"
+                />
+                <div>
+                  <h4 className="font-bold text-foreground">
+                    {course.instructor}
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Course Instructor
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-sm text-foreground mb-4">
+                {course.instructorBio}
+              </p>
+            </div>
+
             {/* What You'll Learn */}
-            <div className="mb-8">
+            <div className="mb-8 mt-10">
               <h2 className="text-2xl font-bold text-foreground mb-4">
                 What you'll learn
               </h2>
@@ -201,17 +221,9 @@ const CourseDetails = ({ id }: { id: string }) => {
 
                 {/* Action Buttons */}
                 <div className="space-y-3 mb-6">
-                  <Button className="w-full bg-primary hover:bg-primary/90">
+                  <button className="w-full bg-primary hover:bg-primary/90 py-2 rounded text-white">
                     Enroll Now
-                  </Button>
-                  <Button
-                    //   variant="destructive"
-                    className="w-full"
-                    onClick={() => setShowRemoveConfirm(true)}
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Remove Course
-                  </Button>
+                  </button>
                 </div>
 
                 {/* Course Info */}
@@ -235,7 +247,7 @@ const CourseDetails = ({ id }: { id: string }) => {
                 </div>
               </div>
 
-              {/* Instructor Info */}
+              {/* Instructor Info
               <div className="bg-card border border-border rounded-lg p-6">
                 <h3 className="text-xl font-bold text-foreground mb-4">
                   Instructor
@@ -281,7 +293,7 @@ const CourseDetails = ({ id }: { id: string }) => {
                     <div className="text-muted-foreground">Students</div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
