@@ -3,11 +3,11 @@ import Navbar from "@/components/navbar/Navbar";
 import React from "react";
 
 interface CourseDetailsPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 const CourseDetailsPage = async ({ params }: CourseDetailsPageProps) => {
-  const { id } = params;
+  const { id } = await params;
 
   return (
     <div>

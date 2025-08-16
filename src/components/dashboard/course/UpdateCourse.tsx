@@ -8,13 +8,20 @@ import { Upload, X, FileText, DollarSign, Type, FileUp } from "lucide-react";
 import axios from "axios";
 import { URL } from "@/constants/url";
 import Swal from "sweetalert2";
+import {
+  useGetCourseByIdQuery,
+  useUpdateCourseMutation,
+} from "@/redux/api/courseApi";
+import Loading from "@/helpers/Loading";
 interface CourseFormData {
   title: string;
   price: number;
   description: string;
 }
 
-const AddNewCourse = () => {
+const UpdateCourse = ({ id }: { id: string }) => {
+  const { data: courseData, isLoading } = useGetCourseByIdQuery(id);
+  const [updateCourse] = useUpdateCourseMutation();
   const {
     register,
     handleSubmit,
@@ -22,17 +29,24 @@ const AddNewCourse = () => {
     reset,
   } = useForm<CourseFormData>({
     defaultValues: {
-      title: "",
-      price: 0,
-      description: "",
+      title: courseData?.title,
+      price: courseData?.price,
+      description: courseData?.description,
     },
   });
 
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>({
+    name: courseData?.file.url || "",
+  });
+
   const [dragActive, setDragActive] = useState(false);
+  if (isLoading) return <Loading />;
+
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
   };
+
+  console.log("Course Data:", courseData);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -64,6 +78,8 @@ const AddNewCourse = () => {
     setSelectedFile(null);
   };
 
+  //   const [updateCourse] = useUpdateCourseMutation(id);
+
   const onSubmit = async (data: CourseFormData) => {
     try {
       const submitData = new FormData();
@@ -77,17 +93,18 @@ const AddNewCourse = () => {
         submitData.append("file", selectedFile);
       }
 
-      const result = await axios.post(`${URL}course`, submitData, {
+      const result = await axios.put(`${URL}course/${id}`, submitData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
+      // const result = await updateCourse({ id, ...submitPayload }).unwrap();
 
       if (result.data.success) {
-        console.log("Course created successfully:", result);
+        console.log("Course Update successfully:", result);
         Swal.fire({
           title: "Success",
-          text: "Course created successfully!",
+          text: "Course Update successfully!",
           icon: "success",
         });
         reset();
@@ -106,7 +123,7 @@ const AddNewCourse = () => {
     <div className="max-w-4xl mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">
-          Upload Course
+          Update Course
         </h1>
         <p className="text-muted-foreground">
           Create a new course by filling out the form below
@@ -127,6 +144,7 @@ const AddNewCourse = () => {
             <input
               type="text"
               id="title"
+              defaultValue={courseData?.title || ""}
               {...register("title", {
                 required: "Course title is required",
                 minLength: {
@@ -161,6 +179,7 @@ const AddNewCourse = () => {
             </label>
             <input
               type="number"
+              defaultValue={courseData?.price || 0}
               id="price"
               {...register("price", {
                 required: "Price is required",
@@ -197,6 +216,7 @@ const AddNewCourse = () => {
             </label>
             <textarea
               id="description"
+              defaultValue={courseData?.description || ""}
               {...register("description", {
                 required: "Description is required",
                 minLength: {
@@ -316,4 +336,4 @@ const AddNewCourse = () => {
   );
 };
 
-export default AddNewCourse;
+export default UpdateCourse;

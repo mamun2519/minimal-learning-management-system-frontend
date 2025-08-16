@@ -35,7 +35,11 @@ export const courseApi = baseApi.injectEndpoints({
         url: `course/${id}`,
         method: "PUT",
         body: updatedCourse,
+        // headers: {
+        //   "Content-Type": "multipart/form-data",
+        // },
       }),
+
       invalidatesTags: (result, error, { id }) => [{ type: "course", id }],
     }),
     deleteCourse: builder.mutation({

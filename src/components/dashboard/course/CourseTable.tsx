@@ -111,9 +111,12 @@ const DashboardCourseView = () => {
                       <Eye className="h-4 w-4" />
                       Modules
                     </button>
-                    <button className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg">
+                    <Link
+                      href={`/dashboard/all-course/update-course/${course._id}`}
+                      className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg pointer"
+                    >
                       <Edit className="h-4 w-4" />
-                    </button>
+                    </Link>
                     <button className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg">
                       <Trash2 className="h-4 w-4" />
                     </button>
