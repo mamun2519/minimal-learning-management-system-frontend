@@ -1,4 +1,5 @@
 import { ICourse } from "@/types/course";
+import { Edit, Eye, Trash } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 interface CourseTableBodyProps {
@@ -34,7 +35,7 @@ const CourseTableBody = ({ coursesData }: CourseTableBodyProps) => {
                 ${course.price}
               </span>
               <span className="text-sm text-muted-foreground line-through">
-                100
+                50
               </span>
             </div>
           </td>
@@ -50,7 +51,7 @@ const CourseTableBody = ({ coursesData }: CourseTableBodyProps) => {
                 <Edit className="h-4 w-4" />
               </button>
               <button className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg">
-                <Trash2 className="h-4 w-4" />
+                <Trash className="h-4 w-4" />
               </button>
             </div>
           </td>
