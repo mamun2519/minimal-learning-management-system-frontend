@@ -35,9 +35,7 @@ const UpdateCourse = ({ id }: { id: string }) => {
     },
   });
 
-  const [selectedFile, setSelectedFile] = useState<File | null>({
-    name: courseData?.file.url || "",
-  });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const [dragActive, setDragActive] = useState(false);
   if (isLoading) return <Loading />;
