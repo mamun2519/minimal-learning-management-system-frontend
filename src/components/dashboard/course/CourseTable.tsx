@@ -5,6 +5,9 @@ import { Search, Eye, Edit, Trash2, ChevronDown } from "lucide-react";
 import { useGetCoursesQuery } from "@/redux/api/courseApi";
 import Loading from "@/helpers/Loading";
 import { ICourse } from "@/types/course";
+import DashboardSearchBar from "@/components/textInput/DashboardSearchBar";
+import DashboardTextSelector from "@/components/textInput/DashboardTextSelector";
+import TableHead from "@/components/table/TableHead";
 
 const CourseTable = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -43,30 +46,17 @@ const CourseTable = () => {
           </h2>
           <div className="flex flex-col sm:flex-row gap-3">
             {/* Search Bar */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <input
-                type="text"
-                placeholder="Search courses..."
-                value={searchQuery}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent w-full sm:w-64"
-              />
-            </div>
-            {/* Limit Selector */}
-            <div className="relative">
-              <select
-                value={data.meta?.limit || pageSize}
-                onChange={(e) => setPageSize(Number(e.target.value))}
-                className="appearance-none bg-background border border-border rounded-lg px-4 py-2 pr-8 text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-              >
-                <option value={5}>Show 5</option>
-                <option value={10}>Show 10</option>
-                <option value={20}>Show 20</option>
-                <option value={50}>Show 50</option>
-              </select>
-              <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-            </div>
+
+            <DashboardSearchBar
+              searchQuery={searchQuery}
+              handleSearchChange={handleSearchChange}
+            />
+
+            <DashboardTextSelector
+              pageSize={pageSize}
+              setPageSize={setPageSize}
+              limit={data?.meta?.limit}
+            />
           </div>
         </div>
       </div>
@@ -74,22 +64,8 @@ const CourseTable = () => {
       {/* Desktop Table View */}
       <div className="hidden lg:block overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-white border-b border-border">
-            <tr>
-              <th className="text-left py-3 px-6 font-medium text-muted-foreground">
-                Course
-              </th>
-              <th className="text-left py-3 px-6 font-medium text-muted-foreground">
-                Price
-              </th>
-              <th className="text-left py-3 px-6 font-medium text-muted-foreground">
-                Modules
-              </th>
-              <th className="text-left py-3 px-6 font-medium text-muted-foreground">
-                Actions
-              </th>
-            </tr>
-          </thead>
+          <TableHead tableHeadings={["Course", "Price", "Modules", "Action"]} />
+
           <tbody>
             {coursesData?.map((course: ICourse) => (
               <tr
