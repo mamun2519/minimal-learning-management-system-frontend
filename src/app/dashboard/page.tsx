@@ -10,8 +10,6 @@ export default function Dashboard() {
           Welcome back! happening with your courses.
         </p>
       </div>
-
-      <div>"hello word"</div>
     </div>
   );
 }
