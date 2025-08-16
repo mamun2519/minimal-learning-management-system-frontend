@@ -1,21 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useState } from "react";
 import { Search, Eye, Edit, Trash2, ChevronDown } from "lucide-react";
 import { useGetCoursesQuery } from "@/redux/api/courseApi";
 import Loading from "@/helpers/Loading";
 import { ICourse } from "@/types/course";
-
-interface Course {
-  title: string;
-  instructor: string;
-  instructorImage: string;
-  rating: number;
-  reviewCount: number;
-  price: number;
-  originalPrice: number;
-  description: string;
-  category: string;
-}
 
 const CourseTable = () => {
   const [searchQuery, setSearchQuery] = useState("");
