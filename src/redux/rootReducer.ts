@@ -1,5 +1,5 @@
-import userReducer from "./userReducer";
-import { baseApi } from "./baseApi";
+import { baseApi } from "./api/baseApi";
+import userReducer from "./Slices/userSlice";
 export const reducer = {
   user: userReducer,
 
