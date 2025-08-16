@@ -2,7 +2,7 @@ import { createApi } from "@reduxjs/toolkit/query";
 import type { BaseQueryFn } from "@reduxjs/toolkit/query";
 import axios from "axios";
 import type { AxiosRequestConfig, AxiosError } from "axios";
-import { instance as axiosInstace } from "./axiosInstace";
+import { instance as axiosInstace } from "./axiosInstance";
 
 export const axiosBaseQuery =
   (
@@ -32,7 +32,7 @@ export const axiosBaseQuery =
 
       return result;
     } catch (axiosError) {
-      let err = axiosError as AxiosError;
+      const err = axiosError as AxiosError;
       return {
         error: {
           status: err.response?.status,

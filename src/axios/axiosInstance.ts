@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { authKey } from "@/constants/storageKey";
-import { getFromLocalStorage } from "@/utils/local-storage";
+import { IGenericErrorResponse } from "@/types";
+import { getFromLocalStorage } from "@/utils/localStorage";
 import axios from "axios";
 
 const instance = axios.create();
@@ -26,7 +28,6 @@ instance.interceptors.request.use(
 );
 
 // Add a response interceptor
-// @ts-ignore
 instance.interceptors.response.use(
   function (response) {
     const responseObject: any = {
