@@ -18,7 +18,11 @@ import {
 const menuItems = [
   { icon: Home, label: "Dashboard", href: "/dashboard" },
   { icon: BookOpen, label: "Courses", href: "/dashboard/all-course" },
-  { icon: Users, label: "Students", href: "/" },
+  {
+    icon: Users,
+    label: "Add Course",
+    href: "/dashboard/all-course/add-new-course",
+  },
   { icon: BarChart3, label: "Analytics", href: "/dashboard/analytics" },
   { icon: Calendar, label: "Schedule", href: "/dashboard/schedule" },
   { icon: MessageSquare, label: "Messages", href: "/dashboard/messages" },

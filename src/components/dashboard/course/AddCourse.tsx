@@ -1,9 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type React from "react";
 
 import { Upload, X, FileText, DollarSign, Type, FileUp } from "lucide-react";
+import { useCreateCourseMutation } from "@/redux/api/courseApi";
+import axios from "axios";
+import { URL } from "@/constants/url";
 
 interface CourseFormData {
   title: string;
@@ -28,9 +32,7 @@ const AddNewCourse = () => {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
-
-  const watchedValues = watch();
-
+  const [createCourse] = useCreateCourseMutation();
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
   };
@@ -68,43 +70,47 @@ const AddNewCourse = () => {
   const onSubmit = async (data: CourseFormData) => {
     try {
       const submitData = new FormData();
-      submitData.append("title", data.title);
-      submitData.append("price", data.price.toString());
-      submitData.append("description", data.description);
+      const submitPayload = {
+        title: data.title,
+        price: parseInt(data?.price as any),
+        description: data.description,
+      };
+      submitData.append("data", JSON.stringify(submitPayload));
       if (selectedFile) {
         submitData.append("file", selectedFile);
       }
 
       // Here you would send the FormData to your backend
-      console.log("[v0] FormData prepared for backend:", {
-        title: data.title,
-        price: data.price,
-        description: data.description,
-        file: selectedFile?.name,
+
+      const result = await axios.post(`${URL}course`, submitData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      if (result.data.success) {
+        console.log("Course created successfully:", result);
 
-      // Reset form after successful submission
-      reset();
-      setSelectedFile(null);
-      alert("Course uploaded successfully!");
+        // Reset form after successful submission
+        reset();
+        setSelectedFile(null);
+        alert("Course uploaded successfully!");
+      }
     } catch (error) {
       console.error("Upload failed:", error);
       alert("Upload failed. Please try again.");
     }
   };
 
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return (
-      Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
-    );
-  };
+  //   const formatFileSize = (bytes: number) => {
+  //     if (bytes === 0) return "0 Bytes";
+  //     const k = 1024;
+  //     const sizes = ["Bytes", "KB", "MB", "GB"];
+  //     const i = Math.floor(Math.log(bytes) / Math.log(k));
+  //     return (
+  //       Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
+  //     );
+  //   };
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -251,7 +257,7 @@ const AddNewCourse = () => {
                 type="file"
                 onChange={handleFileInputChange}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                accept=".pdf,.doc,.docx,.ppt,.pptx,.zip,.mp4,.mov,.avi"
+                //     accept=".pdf,.doc,.docx,.ppt,.pptx,.zip,.mp4,.mov,.avi"
               />
 
               {!selectedFile ? (
@@ -277,9 +283,9 @@ const AddNewCourse = () => {
                       <p className="font-medium text-foreground">
                         {selectedFile.name}
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      {/* <p className="text-sm text-muted-foreground">
                         {formatFileSize(selectedFile.size)}
-                      </p>
+                      </p> */}
                     </div>
                     <button
                       type="button"
@@ -297,12 +303,6 @@ const AddNewCourse = () => {
 
         {/* Submit Button */}
         <div className="flex flex-col sm:flex-row gap-4 sm:justify-end">
-          <button
-            type="button"
-            className="px-6 py-2 border border-input bg-background text-foreground rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-          >
-            Save as Draft
-          </button>
           <button
             type="submit"
             disabled={isSubmitting || Object.keys(errors).length > 0}

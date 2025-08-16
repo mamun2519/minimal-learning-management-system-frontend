@@ -24,6 +24,9 @@ export const courseApi = baseApi.injectEndpoints({
         url: "course",
         method: "POST",
         body: newCourse,
+        // headers: {
+        //   "Content-Type": "multipart/form-data",
+        // },
       }),
       invalidatesTags: ["course"],
     }),
