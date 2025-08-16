@@ -11,8 +11,9 @@ import TableHead from "@/components/table/TableHead";
 import CourseTableBody from "@/components/table/CourseTableBody";
 import Image from "next/image";
 import { Pagination } from "@mui/material";
+import Link from "next/link";
 
-const CourseTable = () => {
+const DashboardCourseView = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -60,6 +61,12 @@ const CourseTable = () => {
               setPageSize={setPageSize}
               limit={data?.meta?.limit}
             />
+            <Link
+              href="/dashboard/all-course/add-new-course"
+              className="bg-primary/90 px-4  rounded-md text-white py-2"
+            >
+              Add New Course
+            </Link>
           </div>
         </div>
       </div>
@@ -132,4 +139,4 @@ const CourseTable = () => {
   );
 };
 
-export default CourseTable;
+export default DashboardCourseView;
