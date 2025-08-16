@@ -9,10 +9,10 @@ async function Home() {
   const result = await data.json();
   const courses = result?.data?.data;
   const coursesMetaData = result?.data.meta;
-  console.log(coursesMetaData);
+  console.log(courses);
   return (
     <div>
-      <InToCourse />
+      <InToCourse courses={courses} coursesMetaData={coursesMetaData} />
     </div>
   );
 }
