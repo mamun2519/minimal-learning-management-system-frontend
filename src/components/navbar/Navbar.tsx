@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 export default function Navbar() {
@@ -29,12 +30,12 @@ export default function Navbar() {
               >
                 About
               </a>
-              <a
-                href="#"
-                className="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              <Link
+                href="/dashboard"
+                className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
-                Services
-              </a>
+                Dashboard
+              </Link>
               <a
                 href="#"
                 className="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"

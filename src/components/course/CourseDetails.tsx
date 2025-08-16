@@ -1,15 +1,11 @@
 "use client";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Star,
   Clock,
-  Users,
   BookOpen,
   ArrowLeft,
-  Trash2,
   Globe,
-  Award,
   PlayCircle,
 } from "lucide-react";
 import { Button } from "@mui/material";
