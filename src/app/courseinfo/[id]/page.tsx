@@ -5,10 +5,12 @@ interface CourseDetailsPageProps {
   params: { id: string };
 }
 
-const CourseDetailsPage = ({ params }: CourseDetailsPageProps) => {
+const CourseDetailsPage = async ({ params }: CourseDetailsPageProps) => {
+  const { id } = params;
+
   return (
     <div>
-      <CourseDetails id={params.id} />
+      <CourseDetails id={id} />
     </div>
   );
 };

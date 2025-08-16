@@ -142,9 +142,8 @@ export default function InToCourse() {
   query["limit"] = coursesPerPage;
   const { data, isLoading } = useGetCoursesQuery(query);
 
-  // if(isLoading) {{
-  //  return  <Loading />
-  // }
+  if (isLoading) return <Loading />;
+
   const totalPage = data?.meta?.totalPages || 1;
   const coursesData = data?.data || [];
   console.log(coursesData);

@@ -15,61 +15,56 @@ import {
 import { Button } from "@mui/material";
 import { useGetCourseByIdQuery } from "@/redux/api/courseApi";
 import Image from "next/image";
+import Loading from "@/helpers/Loading";
 
-const sampleCourses = [
-  {
-    id: "1",
-    title: "Complete Web Development Bootcamp",
-    instructor: "Sarah Johnson",
-    instructorImage:
-      "https://media.geeksforgeeks.org/wp-content/uploads/20230629123647/Best-C-Programming-Courses-For-Beginners.png",
-    instructorBio:
-      "Senior Full Stack Developer with 8+ years of experience at top tech companies. Passionate about teaching and helping students launch their careers in web development.",
-    instructorExperience: "8+ years",
-    instructorStudents: "45,000+",
-    rating: 4.8,
-    reviewCount: 12543,
-    price: 89,
-    originalPrice: 199,
-    description:
-      "Learn modern web development from scratch. Build real projects with HTML, CSS, JavaScript, React, and Node.js.",
-    category: "Web Development",
-    duration: "42 hours",
-    lessons: 156,
-    level: "Beginner to Advanced",
-    language: "English",
-    lastUpdated: "December 2024",
-    whatYouLearn: [
-      "Build responsive websites with HTML5 and CSS3",
-      "Master JavaScript ES6+ and modern frameworks",
-      "Create dynamic web applications with React",
-      "Develop backend APIs with Node.js and Express",
-      "Work with databases and authentication",
-      "Deploy applications to production",
-    ],
-    requirements: [
-      "No prior programming experience required",
-      "A computer with internet connection",
-      "Willingness to learn and practice",
-    ],
-  },
-  // Add more courses as needed
-];
+const course = {
+  id: "1",
+  title: "Complete Web Development Bootcamp",
+  instructor: "Sarah Johnson",
+  instructorImage:
+    "https://media.geeksforgeeks.org/wp-content/uploads/20230629123647/Best-C-Programming-Courses-For-Beginners.png",
+  instructorBio:
+    "Senior Full Stack Developer with 8+ years of experience at top tech companies. Passionate about teaching and helping students launch their careers in web development.",
+  instructorExperience: "8+ years",
+  instructorStudents: "45,000+",
+  rating: 4.8,
+  reviewCount: 12543,
+  price: 89,
+  originalPrice: 199,
+  description:
+    "Learn modern web development from scratch. Build real projects with HTML, CSS, JavaScript, React, and Node.js.",
+  category: "Web Development",
+  duration: "42 hours",
+  lessons: 156,
+  level: "Beginner to Advanced",
+  language: "English",
+  lastUpdated: "December 2024",
+  whatYouLearn: [
+    "Build responsive websites with HTML5 and CSS3",
+    "Master JavaScript ES6+ and modern frameworks",
+    "Create dynamic web applications with React",
+    "Develop backend APIs with Node.js and Express",
+    "Work with databases and authentication",
+    "Deploy applications to production",
+  ],
+  requirements: [
+    "No prior programming experience required",
+    "A computer with internet connection",
+    "Willingness to learn and practice",
+  ],
+};
 
 const CourseDetails = ({ id }: { id: string }) => {
   const router = useRouter();
-  console.log("Course ID:", id);
-  const { data, isLoading } = useGetCourseByIdQuery(id);
-  console.log("Course Data:", data);
-  // Find course by ID - in a real app this would be an API call
-  const course = sampleCourses.find((c) => c.id === id) || sampleCourses[0];
 
+  const { data, isLoading } = useGetCourseByIdQuery(id);
+
+  if (isLoading) return <Loading />;
   return (
     <div className="min-h-screen bg-background">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back Button */}
         <Button
-          //     variant="ghost"
           onClick={() => router.back()}
           className="mb-6 flex items-center gap-2"
         >
