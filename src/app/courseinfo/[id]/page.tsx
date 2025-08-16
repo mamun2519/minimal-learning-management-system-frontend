@@ -1,4 +1,5 @@
 import CourseDetails from "@/components/course/CourseDetails";
+import Navbar from "@/components/navbar/Navbar";
 import React from "react";
 
 interface CourseDetailsPageProps {
@@ -10,6 +11,7 @@ const CourseDetailsPage = async ({ params }: CourseDetailsPageProps) => {
 
   return (
     <div>
+      <Navbar />
       <CourseDetails id={id} />
     </div>
   );
