@@ -1,4 +1,5 @@
 import { Star, Clock, Users, BookOpen } from "lucide-react";
+import PrimaryButton from "../ui/PrimaryButton";
 
 interface CourseCardProps {
   title: string;
@@ -99,7 +100,7 @@ function Courses({
               </span>
             )}
           </div>
-          <Button className="bg-primary hover:bg-primary/90">Enroll Now</Button>
+          {<PrimaryButton title=" Enroll Now" />}
         </div>
       </div>
     </div>

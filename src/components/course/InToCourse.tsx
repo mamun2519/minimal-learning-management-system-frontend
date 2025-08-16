@@ -141,6 +141,10 @@ export default function InToCourse() {
     setSearchQuery(query);
     setCurrentPage(1);
   };
+
+  const handlePageChange = (event: any, page: any) => {
+    setCurrentPage(page);
+  };
   return (
     <div>
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -179,11 +183,15 @@ export default function InToCourse() {
           ))}
         </div>
 
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-        />
+        <div className="flex justify-center mt-8">
+          <Pagination
+            count={15}
+            onChange={handlePageChange}
+            page={currentPage}
+            variant="outlined"
+            shape="rounded"
+          />
+        </div>
       </main>
     </div>
   );
