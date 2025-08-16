@@ -1,9 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import Courses from "@/components/course/Courses";
 import SearchBar from "@/components/ui/Searchbar";
+import Loading from "@/helpers/Loading";
+import { useGetCoursesQuery } from "@/redux/api/courseApi";
+import { ICourse } from "@/types/course";
 import { Pagination } from "@mui/material";
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 export default function InToCourse() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -130,24 +134,22 @@ export default function InToCourse() {
     },
   ];
 
-  const filteredCourses = useMemo(() => {
-    return sampleCourses.filter(
-      (course) =>
-        course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        course.instructor.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        course.category.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [searchQuery]);
+  const query: Record<string, any> = {};
+  if (searchQuery) {
+    query["searchTerm"] = searchQuery;
+  }
+  query["page"] = currentPage;
+  query["limit"] = coursesPerPage;
+  const { data, isLoading } = useGetCoursesQuery(query);
 
-  const totalPages = Math.ceil(filteredCourses.length / coursesPerPage);
-  const startIndex = (currentPage - 1) * coursesPerPage;
-  const paginatedCourses = filteredCourses.slice(
-    startIndex,
-    startIndex + coursesPerPage
-  );
-
-  const handleSearchChange = (query: string) => {
-    setSearchQuery(query);
+  // if(isLoading) {{
+  //  return  <Loading />
+  // }
+  const totalPage = data?.meta?.totalPages || 1;
+  const coursesData = data?.data || [];
+  console.log(coursesData);
+  const handleSearchChange = (search: string) => {
+    setSearchQuery(search);
     setCurrentPage(1);
   };
 
@@ -168,7 +170,7 @@ export default function InToCourse() {
           </p>
 
           <SearchBar
-            value={searchQuery}
+            value={searchQuery || ""}
             onChange={handleSearchChange}
             placeholder="Search courses, instructors, or categories..."
           />
@@ -176,16 +178,16 @@ export default function InToCourse() {
 
         {/* Course Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {paginatedCourses.map((course, index) => (
+          {coursesData?.map((course: ICourse, index: number) => (
             <Courses key={index} {...course} />
           ))}
         </div>
 
         <div className="flex justify-center mt-8">
           <Pagination
-            count={15}
+            count={totalPage}
             onChange={handlePageChange}
-            page={currentPage}
+            page={data?.meta?.page || 1}
             variant="outlined"
             shape="rounded"
           />

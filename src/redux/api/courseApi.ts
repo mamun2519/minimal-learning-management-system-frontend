@@ -6,7 +6,7 @@ export const courseApi = baseApi.injectEndpoints({
     getCourses: builder.query({
       query: (arg: Record<string, any>) => ({
         method: "GET",
-        url: "courses",
+        url: "course",
         params: arg,
       }),
 
@@ -15,13 +15,13 @@ export const courseApi = baseApi.injectEndpoints({
     getCourseById: builder.query({
       query: (id: string) => ({
         method: "GET",
-        url: `courses/${id}`,
+        url: `course/${id}`,
       }),
       providesTags: (result, error, id) => [{ type: "course", id }],
     }),
     createCourse: builder.mutation({
       query: (newCourse) => ({
-        url: "courses",
+        url: "course",
         method: "POST",
         body: newCourse,
       }),
@@ -29,7 +29,7 @@ export const courseApi = baseApi.injectEndpoints({
     }),
     updateCourse: builder.mutation({
       query: ({ id, ...updatedCourse }) => ({
-        url: `courses/${id}`,
+        url: `course/${id}`,
         method: "PUT",
         body: updatedCourse,
       }),
@@ -37,7 +37,7 @@ export const courseApi = baseApi.injectEndpoints({
     }),
     deleteCourse: builder.mutation({
       query: (id) => ({
-        url: `courses/${id}`,
+        url: `course/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: (result, error, id) => [{ type: "course", id }],

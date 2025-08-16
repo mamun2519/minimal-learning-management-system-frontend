@@ -4,27 +4,26 @@ import Image from "next/image";
 
 interface CourseCardProps {
   title: string;
-  instructor: string;
-  instructorImage: string;
-  rating: number;
-  reviewCount: number;
+
   price: number;
-  originalPrice?: number;
+  file: {
+    url: string;
+    key: string;
+  };
   description: string;
-  category: string;
 }
 
 function Courses({
   title,
-  instructor,
-  instructorImage,
-  rating,
-  reviewCount,
+
+  file,
   price,
-  originalPrice,
   description,
-  category,
 }: CourseCardProps) {
+  const rating = 4.5;
+  const reviewCount = 1200;
+  const originalPrice = 199;
+
   return (
     <div className="group relative bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 overflow-hidden">
       {/* Category Badge
@@ -41,10 +40,10 @@ function Courses({
           width={200}
           height={400}
           src={
-            instructorImage ||
+            file.url ||
             "https://media.geeksforgeeks.org/wp-content/uploads/20230629123647/Best-C-Programming-Courses-For-Beginners.png"
           }
-          alt={instructor}
+          alt={title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
@@ -60,7 +59,7 @@ function Courses({
         {/* Instructor */}
         <p className="text-muted-foreground text-sm mb-3 flex items-center gap-1">
           <Users className="h-4 w-4" />
-          by {instructor}
+          by Sarah Johnson
         </p>
 
         {/* Description */}
