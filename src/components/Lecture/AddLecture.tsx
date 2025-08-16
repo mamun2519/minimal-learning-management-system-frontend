@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Upload, Plus, Trash2, FileText, Video } from "lucide-react";
 import LectureFrom from "@/components/Lecture/LectureFrom";
 import AddModuleFrom from "@/components/Module/AddModuleFrom";
+import axios from "axios";
+import { URL } from "@/constants/url";
 
 interface LectureData {
   title: string;
@@ -42,20 +44,18 @@ const AddLectureFrom = ({ id }: { id: string }) => {
 
     try {
       const formData = new FormData();
-      formData.append("modules", JSON.stringify(data.moduleTitle));
+      const modulePayload = {
+        title: data.moduleTitle,
+        courseId: id, // Assuming you want to associate this module with a course
+      };
+      formData.append("module", JSON.stringify(modulePayload));
       data.lectures.forEach((lecture, index) => {
         const lecturePayload = {
           title: lecture.title,
-          videoUrl: lecture.videoUrl,
+          videoURl: lecture.videoUrl,
+          courseId: id,
         };
-        // formData.append(`lectures[${index}][title]`, lecture.title);
-        // formData.append(`lectures[${index}][videoUrl]`, lecture.videoUrl);
 
-        // if (lecture.pdfNotes) {
-        //   Array.from(lecture.pdfNotes).forEach((file, fileIndex) => {
-        //     formData.append(`lectures[${index}][pdfNotes][${fileIndex}]`, file);
-        //   });
-        // }
         formData.append("lectures", JSON.stringify(lecturePayload));
         if (lecture.pdfNotes) {
           Array.from(lecture.pdfNotes).forEach((file) => {
@@ -63,12 +63,15 @@ const AddLectureFrom = ({ id }: { id: string }) => {
           });
         }
       });
+
       // Here you would send formData to your backend
       console.log("[v0] Module data prepared for submission:", formData);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
+      const result = await axios.post(`${URL}module/insert`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("[v0] Module upload result:", result);
       alert("Module uploaded successfully!");
       reset();
     } catch (error) {
