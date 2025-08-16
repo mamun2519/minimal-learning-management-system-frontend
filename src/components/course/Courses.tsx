@@ -1,10 +1,11 @@
 import { Star, Clock, Users, BookOpen } from "lucide-react";
 import PrimaryButton from "../ui/PrimaryButton";
 import Image from "next/image";
+import Link from "next/link";
 
 interface CourseCardProps {
   title: string;
-
+  _id: string;
   price: number;
   file: {
     url: string;
@@ -13,13 +14,7 @@ interface CourseCardProps {
   description: string;
 }
 
-function Courses({
-  title,
-
-  file,
-  price,
-  description,
-}: CourseCardProps) {
+function Courses({ title, _id, file, price, description }: CourseCardProps) {
   const rating = 4.5;
   const reviewCount = 1200;
   const originalPrice = 199;
@@ -105,7 +100,11 @@ function Courses({
               </span>
             )}
           </div>
-          {<PrimaryButton title=" Enroll Now" />}
+          {/* {<PrimaryButton title=" Enroll Now" />}
+           */}
+          <Link href={`/courseinfo/${_id}`}>
+            <PrimaryButton title="Enroll Now" />
+          </Link>
         </div>
       </div>
     </div>

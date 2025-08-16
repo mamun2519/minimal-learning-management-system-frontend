@@ -13,8 +13,9 @@ import {
   PlayCircle,
 } from "lucide-react";
 import { Button } from "@mui/material";
+import { useGetCourseByIdQuery } from "@/redux/api/courseApi";
+import Image from "next/image";
 
-// Sample course data - in a real app this would come from an API
 const sampleCourses = [
   {
     id: "1",
@@ -57,8 +58,9 @@ const sampleCourses = [
 
 const CourseDetails = ({ id }: { id: string }) => {
   const router = useRouter();
-  const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
-
+  console.log("Course ID:", id);
+  const { data, isLoading } = useGetCourseByIdQuery(id);
+  console.log("Course Data:", data);
   // Find course by ID - in a real app this would be an API call
   const course = sampleCourses.find((c) => c.id === id) || sampleCourses[0];
 
@@ -91,11 +93,11 @@ const CourseDetails = ({ id }: { id: string }) => {
               </div>
 
               <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                {course.title}
+                {data?.title}
               </h1>
 
               <p className="text-lg text-muted-foreground mb-6">
-                {course.description}
+                {data?.description}
               </p>
 
               {/* Course Stats */}
@@ -143,7 +145,9 @@ const CourseDetails = ({ id }: { id: string }) => {
               </h3>
 
               <div className="flex items-center gap-4 mb-4">
-                <img
+                <Image
+                  height={64}
+                  width={64}
                   src={course.instructorImage || "/placeholder.svg"}
                   alt={course.instructor}
                   className="w-16 h-16 rounded-full object-cover"
@@ -200,8 +204,10 @@ const CourseDetails = ({ id }: { id: string }) => {
               {/* Course Preview Card */}
               <div className="bg-card border border-border rounded-lg p-6 mb-6">
                 <div className="relative mb-4">
-                  <img
-                    src={course.instructorImage || "/placeholder.svg"}
+                  <Image
+                    height={192}
+                    width={384}
+                    src={data?.file?.url || "/placeholder.svg"}
                     alt={course.title}
                     className="w-full h-48 object-cover rounded-lg"
                   />
@@ -210,7 +216,7 @@ const CourseDetails = ({ id }: { id: string }) => {
                 {/* Pricing */}
                 <div className="flex items-center gap-3 mb-6">
                   <span className="text-3xl font-bold text-primary">
-                    ${course.price}
+                    ${data?.price}
                   </span>
                   {course.originalPrice && (
                     <span className="text-lg text-muted-foreground line-through">

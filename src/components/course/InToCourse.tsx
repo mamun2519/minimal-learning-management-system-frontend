@@ -156,6 +156,7 @@ export default function InToCourse() {
   const handlePageChange = (event: any, page: any) => {
     setCurrentPage(page);
   };
+
   return (
     <div>
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -178,8 +179,8 @@ export default function InToCourse() {
 
         {/* Course Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {coursesData?.map((course: ICourse, index: number) => (
-            <Courses key={index} {...course} />
+          {coursesData?.map((course: ICourse) => (
+            <Courses key={course._id} {...course} />
           ))}
         </div>
 
