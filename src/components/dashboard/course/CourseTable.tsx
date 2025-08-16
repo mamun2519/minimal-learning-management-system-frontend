@@ -74,7 +74,14 @@ const DashboardCourseView = () => {
       {/* Desktop Table View */}
       <div className="hidden lg:block overflow-x-auto">
         <table className="w-full">
-          <TableHead tableHeadings={["Course", "Price", "Modules", "Action"]} />
+          <TableHead
+            tableHeadings={[
+              "Course",
+              "Price",
+              "Add Module & Lecture",
+              "Action",
+            ]}
+          />
 
           <CourseTableBody coursesData={coursesData} />
         </table>
@@ -108,8 +115,7 @@ const DashboardCourseView = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <button className="inline-flex items-center gap-2 px-3 py-1 bg-primary text-primary-foreground rounded-lg text-sm">
-                      <Eye className="h-4 w-4" />
-                      Modules
+                      Add Module
                     </button>
                     <Link
                       href={`/dashboard/all-course/update-course/${course._id}`}

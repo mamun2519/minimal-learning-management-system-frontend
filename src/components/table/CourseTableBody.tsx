@@ -41,13 +41,16 @@ const CourseTableBody = ({ coursesData }: CourseTableBodyProps) => {
             </div>
           </td>
           <td className="py-4 px-6">
-            <button className="inline-flex items-center gap-2 px-3 py-1 bg-primary text-primary-foreground rounded-lg text-sm hover:bg-primary/90">
-              <Eye className="h-4 w-4" />
-              View Modules
-            </button>
+            <Link
+              href={`/dashboard/add-module/${course?._id}`}
+              className="inline-flex items-center gap-2 px-3 py-1 bg-primary text-primary-foreground rounded-lg text-sm hover:bg-primary/90"
+            >
+              Add Module
+            </Link>
           </td>
           <td className="py-4 px-6">
             <div className="flex items-center gap-2">
+              <Eye className="h-4 w-4" />
               <Link
                 href={`/dashboard/all-course/update-course/${course._id}`}
                 className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg pointer"
