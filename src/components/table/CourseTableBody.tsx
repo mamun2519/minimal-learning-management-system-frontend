@@ -1,12 +1,42 @@
+"use client";
 import { ICourse } from "@/types/course";
 import { Edit, Eye, Trash } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
+import DeleteModal from "../ui/DeleteModal";
+import { useDeleteCourseMutation } from "@/redux/api/courseApi";
+import Swal from "sweetalert2";
 interface CourseTableBodyProps {
   coursesData: ICourse[];
 }
 const CourseTableBody = ({ coursesData }: CourseTableBodyProps) => {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [id, setId] = useState<string>("");
+  const [deleteCourse, {}] = useDeleteCourseMutation();
+
+  const handleDeleteConfirm = async () => {
+    const response = await deleteCourse(id);
+    if (response?.data) {
+      Swal.fire({
+        title: "Success",
+        text: "Course delete successfully!",
+        icon: "success",
+      });
+      setIsDeleting(false);
+      setId(id);
+    }
+  };
+
+  const handleDeleteClick = (id: string) => {
+    setIsDeleting(true);
+    setId(id);
+  };
+
+  const handleDeleteCancel = () => {
+    setIsDeleting(false);
+    setId(id);
+  };
   return (
     <tbody>
       {coursesData?.map((course: ICourse) => (
@@ -57,13 +87,28 @@ const CourseTableBody = ({ coursesData }: CourseTableBodyProps) => {
               >
                 <Edit className="h-4 w-4" />
               </Link>
-              <button className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg">
+              <button
+                onClick={() => handleDeleteClick(course._id)}
+                className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg"
+              >
                 <Trash className="h-4 w-4" />
               </button>
             </div>
           </td>
         </tr>
       ))}
+
+      {isDeleting && (
+        <DeleteModal
+          isOpen={isDeleting}
+          onClose={handleDeleteCancel}
+          onConfirm={handleDeleteConfirm}
+          title="Delete Course"
+          description="This will permanently remove the course and all its associated data. This action cannot be undone."
+          itemName={"xyz Course"}
+          isLoading={isDeleting}
+        />
+      )}
     </tbody>
   );
 };
