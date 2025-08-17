@@ -51,3 +51,11 @@ export const courseApi = baseApi.injectEndpoints({
     }),
   }),
 });
+
+export const {
+  useGetAllLectureQuery,
+  useGetLectureByIdQuery,
+  useCreateLectureMutation,
+  useUpdateLectureMutation,
+  useDeleteLectureMutation,
+} = courseApi;
