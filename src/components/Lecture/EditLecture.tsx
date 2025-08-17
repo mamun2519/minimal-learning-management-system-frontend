@@ -23,8 +23,6 @@ interface ModuleFormData {
 const EditLectureForm = ({ id }: { id: string }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { data, isLoading } = useGetLectureByIdQuery(id);
-
-  console.log("Lecture Data:", data);
   const {
     register,
     control,
@@ -33,20 +31,19 @@ const EditLectureForm = ({ id }: { id: string }) => {
     reset,
   } = useForm<ModuleFormData>({
     defaultValues: {
-      moduleTitle: "",
       lectures: [
         { title: data?.title, videoUrl: data?.videoURL, pdfNotes: null },
       ],
     },
   });
 
+  console.log("Lecture Data:", data);
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: "lectures",
   });
-
   if (isLoading) return <Loading />;
-
   const onSubmit = async (data: ModuleFormData) => {
     setIsSubmitting(true);
 
@@ -130,7 +127,7 @@ const EditLectureForm = ({ id }: { id: string }) => {
             {isSubmitting ? (
               <>
                 <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
-                Uploading...
+                updating...
               </>
             ) : (
               <>
