@@ -6,6 +6,7 @@ import LectureFrom from "@/components/Lecture/LectureFrom";
 import AddModuleFrom from "@/components/Module/AddModuleFrom";
 import axios from "axios";
 import { URL } from "@/constants/url";
+import Swal from "sweetalert2";
 
 interface LectureData {
   title: string;
@@ -71,9 +72,14 @@ const AddLectureFrom = ({ id }: { id: string }) => {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log("[v0] Module upload result:", result);
-      alert("Module uploaded successfully!");
-      reset();
+      if (result.data.success) {
+        Swal.fire({
+          title: "Success",
+          text: "Module and Lecture created successfully!",
+          icon: "success",
+        });
+        reset();
+      }
     } catch (error) {
       console.error("[v0] Upload error:", error);
       alert("Upload failed. Please try again.");
