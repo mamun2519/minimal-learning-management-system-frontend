@@ -18,17 +18,18 @@ import {
 const menuItems = [
   { icon: Home, label: "Dashboard", href: "/dashboard" },
   { icon: BookOpen, label: "Courses", href: "/dashboard/all-course" },
-  { icon: BookOpen, label: "Lecture", href: "/dashboard/all-lecture" },
+  { icon: BookOpen, label: "Lectures", href: "/dashboard/all-lecture" },
+  { icon: BookOpen, label: "Modules", href: "/dashboard/all-module" },
   {
     icon: Users,
     label: "Add Course",
     href: "/dashboard/all-course/add-new-course",
   },
-  {
-    icon: BarChart3,
-    label: "Add Module & Lecture",
-    href: "/dashboard/add-module",
-  },
+  // {
+  //   icon: BarChart3,
+  //   label: "Add Module & Lecture",
+  //   href: "/dashboard/add-module",
+  // },
   { icon: Calendar, label: "Schedule", href: "/dashboard/add-module" },
   { icon: MessageSquare, label: "Messages", href: "/dashboard/messages" },
   { icon: User, label: "Profile", href: "/dashboard/profile" },
