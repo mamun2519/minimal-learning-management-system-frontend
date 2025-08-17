@@ -1,12 +1,41 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useDeleteCourseMutation } from "@/redux/api/courseApi";
 import { Edit, Eye, Trash } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
+import Swal from "sweetalert2";
+import DeleteModal from "../ui/DeleteModal";
 
 interface LectureTableBodyProps {
   lectureData: any[]; // Replace 'any' with the actual type of your lecture data
 }
 const LectureTableBody = ({ lectureData }: LectureTableBodyProps) => {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [id, setId] = useState<string>("");
+  const [deleteCourse, {}] = useDeleteCourseMutation();
+
+  const handleDeleteConfirm = async () => {
+    const response = await deleteCourse(id);
+    if (response?.data) {
+      Swal.fire({
+        title: "Success",
+        text: "Lecture delete successfully!",
+        icon: "success",
+      });
+      setIsDeleting(false);
+      setId(id);
+    }
+  };
+
+  const handleDeleteClick = (id: string) => {
+    setIsDeleting(true);
+    setId(id);
+  };
+
+  const handleDeleteCancel = () => {
+    setIsDeleting(false);
+    setId(id);
+  };
   return (
     <tbody>
       {lectureData?.map((lecture) => (
@@ -49,13 +78,27 @@ const LectureTableBody = ({ lectureData }: LectureTableBodyProps) => {
               >
                 <Edit className="h-4 w-4" />
               </Link>
-              <button className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg">
+              <button
+                onClick={() => handleDeleteClick(lecture._id)}
+                className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg"
+              >
                 <Trash className="h-4 w-4" />
               </button>
             </div>
           </td>
         </tr>
       ))}
+
+      {isDeleting && (
+        <DeleteModal
+          isOpen={isDeleting}
+          onClose={handleDeleteCancel}
+          onConfirm={handleDeleteConfirm}
+          title="Delete Lecture"
+          description="This will permanently remove the lecture and all its associated data. This action cannot be undone."
+          isLoading={isDeleting}
+        />
+      )}
     </tbody>
   );
 };

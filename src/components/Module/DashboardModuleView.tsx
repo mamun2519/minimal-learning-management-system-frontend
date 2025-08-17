@@ -8,15 +8,23 @@ import Link from "next/link";
 import TableHead from "../table/TableHead";
 import { Edit, Trash2 } from "lucide-react";
 import { Pagination } from "@mui/material";
-import { useGetAllModuleQuery } from "@/redux/api/moduleApi";
+import {
+  useDeleteModuleMutation,
+  useGetAllModuleQuery,
+} from "@/redux/api/moduleApi";
 
 import ModuleTableBody from "../table/ModuleTableBody";
 import DashboardTextSelector from "../textInput/DashboardTextSelector";
+import DeleteModal from "../ui/DeleteModal";
+import Swal from "sweetalert2";
 
 const DashboardModuleView = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [id, setId] = useState<string>("");
+  const [deleteModule, {}] = useDeleteModuleMutation();
 
   const query: Record<string, any> = {};
   if (searchQuery) {
@@ -39,10 +47,6 @@ const DashboardModuleView = () => {
   const handlePageChange = (event: any, page: any) => {
     setCurrentPage(page);
   };
-
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [id, setId] = useState<string>("");
-  const [deleteModule, {}] = useDeleteModuleMutation();
 
   const handleDeleteConfirm = async () => {
     const response = await deleteModule(id);
@@ -126,7 +130,10 @@ const DashboardModuleView = () => {
                     >
                       <Edit className="h-4 w-4" />
                     </Link>
-                    <button className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg">
+                    <button
+                      onClick={() => handleDeleteClick(module?._id)}
+                      className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg"
+                    >
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
@@ -136,6 +143,17 @@ const DashboardModuleView = () => {
           ))}
         </div>
       </div>
+
+      {isDeleting && (
+        <DeleteModal
+          isOpen={isDeleting}
+          onClose={handleDeleteCancel}
+          onConfirm={handleDeleteConfirm}
+          title="Delete Module"
+          description="This will permanently remove the module and all its associated data. This action cannot be undone."
+          isLoading={isDeleting}
+        />
+      )}
 
       {/* // Pagination */}
       <div className="flex justify-center py-8">
