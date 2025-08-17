@@ -52,6 +52,7 @@ const DashboardLectureView = () => {
             <DashboardSearchBar
               searchQuery={searchQuery}
               handleSearchChange={handleSearchChange}
+              placeholder="Search by lecture title"
             />
 
             <DashboardTextSelector
