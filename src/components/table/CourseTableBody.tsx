@@ -105,7 +105,6 @@ const CourseTableBody = ({ coursesData }: CourseTableBodyProps) => {
           onConfirm={handleDeleteConfirm}
           title="Delete Course"
           description="This will permanently remove the course and all its associated data. This action cannot be undone."
-          itemName={"xyz Course"}
           isLoading={isDeleting}
         />
       )}

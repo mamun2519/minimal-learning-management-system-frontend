@@ -39,6 +39,33 @@ const DashboardModuleView = () => {
   const handlePageChange = (event: any, page: any) => {
     setCurrentPage(page);
   };
+
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [id, setId] = useState<string>("");
+  const [deleteModule, {}] = useDeleteModuleMutation();
+
+  const handleDeleteConfirm = async () => {
+    const response = await deleteModule(id);
+    if (response?.data) {
+      Swal.fire({
+        title: "Success",
+        text: "Module delete successfully!",
+        icon: "success",
+      });
+      setIsDeleting(false);
+      setId(id);
+    }
+  };
+
+  const handleDeleteClick = (id: string) => {
+    setIsDeleting(true);
+    setId(id);
+  };
+
+  const handleDeleteCancel = () => {
+    setIsDeleting(false);
+    setId(id);
+  };
   return (
     <div className="bg-card border border-border rounded-lg">
       {/* Header with Search and Limit */}

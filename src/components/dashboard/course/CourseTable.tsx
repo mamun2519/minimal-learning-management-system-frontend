@@ -2,7 +2,10 @@
 "use client";
 import { useState } from "react";
 import { Search, Eye, Edit, Trash2, ChevronDown } from "lucide-react";
-import { useGetCoursesQuery } from "@/redux/api/courseApi";
+import {
+  useDeleteCourseMutation,
+  useGetCoursesQuery,
+} from "@/redux/api/courseApi";
 import Loading from "@/helpers/Loading";
 import { ICourse } from "@/types/course";
 import DashboardSearchBar from "@/components/textInput/DashboardSearchBar";
@@ -12,11 +15,16 @@ import CourseTableBody from "@/components/table/CourseTableBody";
 import Image from "next/image";
 import { Pagination } from "@mui/material";
 import Link from "next/link";
+import Swal from "sweetalert2";
+import DeleteModal from "@/components/ui/DeleteModal";
 
 const DashboardCourseView = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [id, setId] = useState<string>("");
+  const [deleteCourse, {}] = useDeleteCourseMutation();
 
   const query: Record<string, any> = {};
   if (searchQuery) {
@@ -38,6 +46,29 @@ const DashboardCourseView = () => {
 
   const handlePageChange = (event: any, page: any) => {
     setCurrentPage(page);
+  };
+
+  const handleDeleteConfirm = async () => {
+    const response = await deleteCourse(id);
+    if (response?.data) {
+      Swal.fire({
+        title: "Success",
+        text: "Course delete successfully!",
+        icon: "success",
+      });
+      setIsDeleting(false);
+      setId(id);
+    }
+  };
+
+  const handleDeleteClick = (id: string) => {
+    setIsDeleting(true);
+    setId(id);
+  };
+
+  const handleDeleteCancel = () => {
+    setIsDeleting(false);
+    setId(id);
   };
 
   return (
@@ -123,7 +154,10 @@ const DashboardCourseView = () => {
                     >
                       <Edit className="h-4 w-4" />
                     </Link>
-                    <button className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg">
+                    <button
+                      onClick={() => handleDeleteClick(course._id)}
+                      className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg"
+                    >
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
@@ -133,6 +167,18 @@ const DashboardCourseView = () => {
           ))}
         </div>
       </div>
+
+      {isDeleting && (
+        <DeleteModal
+          isOpen={isDeleting}
+          onClose={handleDeleteCancel}
+          onConfirm={handleDeleteConfirm}
+          title="Delete Course"
+          description="This will permanently remove the course and all its associated data. This action cannot be undone."
+          itemName={"xyz Course"}
+          isLoading={isDeleting}
+        />
+      )}
 
       {/* // Pagination */}
       <div className="flex justify-center py-8">

@@ -7,7 +7,7 @@ interface DeleteModalProps {
   onConfirm: () => void;
   title: string;
   description?: string;
-  itemName?: string;
+
   isLoading?: boolean;
 }
 
@@ -17,7 +17,6 @@ const DeleteModal = ({
   onConfirm,
   title,
   description,
-  itemName,
 }: DeleteModalProps) => {
   if (!isOpen) return null;
 
@@ -45,9 +44,6 @@ const DeleteModal = ({
               <h3 className="text-lg font-semibold text-card-foreground">
                 {title}
               </h3>
-              {itemName && (
-                <p className="text-sm text-muted-foreground">{itemName}</p>
-              )}
             </div>
           </div>
 
