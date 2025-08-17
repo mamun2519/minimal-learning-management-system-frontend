@@ -1,21 +1,27 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import CustomInput from "@/components/textInput/CustomInput";
+import { useRegisterUserMutation } from "@/redux/api/authApi";
+import { useAppDispatch } from "@/redux/hooks";
+import { setUser } from "@/redux/Slices/userSlice";
+import { storeUserInfo } from "@/utils/auth";
+import { useRouter } from "next/navigation";
 
 interface SignupFormData {
   name: string;
   email: string;
   password: string;
-  confirmPassword: string;
 }
 
 export default function SignupPage() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [registerUser, { isLoading }] = useRegisterUserMutation();
+  const [errorMessage, setErrorMessage] = useState("");
 
+  const dispatch = useAppDispatch();
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -23,19 +29,27 @@ export default function SignupPage() {
     formState: { errors },
   } = useForm<SignupFormData>();
 
-  const password = watch("password");
-
   const onSubmit = async (data: SignupFormData) => {
-    setIsLoading(true);
     try {
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      console.log("Signup data:", data);
+      const result = await registerUser(data).unwrap();
+      console.log("Signup data:", result);
+      if (result?.token) {
+        dispatch(
+          setUser({
+            userId: result?.user?.id,
+            email: result?.user?.email,
+            role: result?.user?.role,
+          })
+        );
+        router.push("/");
+      }
+
+      storeUserInfo({ accessToken: result?.token });
       // Handle successful signup
-    } catch (error) {
+    } catch (error: any) {
+      setErrorMessage(error?.data);
       console.error("Signup error:", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -50,6 +64,11 @@ export default function SignupPage() {
         </div>
 
         <div className="p-6 pt-2">
+          {errorMessage && (
+            <div className="bg-red-500 h-12 rounded mt-2 flex  items-center px-4">
+              <p className="text-white">{errorMessage}</p>
+            </div>
+          )}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <CustomInput
               name="name"

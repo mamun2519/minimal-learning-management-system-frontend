@@ -1,8 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import CustomInput from "@/components/textInput/CustomInput";
+import { useUserLoginMutation } from "@/redux/api/authApi";
+import { useAppDispatch } from "@/redux/hooks";
+import { setUser } from "@/redux/Slices/userSlice";
+import { useRouter } from "next/navigation";
+import { storeUserInfo } from "@/utils/auth";
 
 interface SigninFormData {
   email: string;
@@ -10,26 +16,36 @@ interface SigninFormData {
 }
 
 export default function SigninPage() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [userLogin, { isLoading }] = useUserLoginMutation();
+  const [errorMessage, setErrorMessage] = useState("");
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<SigninFormData>();
+  const dispatch = useAppDispatch();
 
+  const router = useRouter();
   const onSubmit = async (data: SigninFormData) => {
-    setIsLoading(true);
     try {
       // Simulate API call
-      // await new Promise((resolve) => setTimeout(resolve, 2000));
-      console.log("Signin data:", data);
-      // Handle successful signin
-    } catch (error) {
-      console.error("Signin error:", error);
-    } finally {
-      setIsLoading(false);
+      const result = await userLogin(data).unwrap();
+      console.log("Signin data:", result);
+      if (result?.token) {
+        dispatch(
+          setUser({
+            userId: result?.user?.id,
+            email: result?.user?.email,
+            role: result?.user?.role,
+          })
+        );
+        router.push("/");
+
+        storeUserInfo({ accessToken: result.token });
+      }
+    } catch (error: any) {
+      setErrorMessage(error?.data);
     }
   };
 
@@ -44,6 +60,11 @@ export default function SigninPage() {
         </div>
 
         <div className="p-6 pt-2">
+          {errorMessage && (
+            <div className="bg-red-500 h-12 rounded mt-2 flex  items-center px-4">
+              <p className="text-white">{errorMessage}</p>
+            </div>
+          )}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* Email Field */}
 
