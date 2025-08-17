@@ -1,7 +1,12 @@
+import AddModuleAndLecture from "@/components/Lecture/AddModuleLecture";
 import React from "react";
 
-const page = () => {
-  return <div></div>;
+const AddModuleAndLecturePage = () => {
+  return (
+    <div>
+      <AddModuleAndLecture />
+    </div>
+  );
 };
 
-export default page;
+export default AddModuleAndLecturePage;
