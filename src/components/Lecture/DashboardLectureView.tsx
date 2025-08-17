@@ -51,7 +51,7 @@ const DashboardLectureView = () => {
 
   const totalPage = data?.meta?.totalPages || 1;
   const lectureData = data || [];
-  const moduleDataMap = moduleData.data.map(
+  const moduleDataMap = moduleData?.data?.map(
     (module: { _id: string; title: string }) => {
       return {
         value: module._id,

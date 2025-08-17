@@ -11,6 +11,7 @@ import { Pagination } from "@mui/material";
 import { useGetAllModuleQuery } from "@/redux/api/moduleApi";
 
 import ModuleTableBody from "../table/ModuleTableBody";
+import DashboardTextSelector from "../textInput/DashboardTextSelector";
 
 const DashboardModuleView = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -28,7 +29,7 @@ const DashboardModuleView = () => {
 
   if (isLoading) return <Loading />;
 
-  const totalPage = moduleData?.meta?.totalPages || 1;
+  const totalPage = moduleData?.meta?.total || 1;
 
   const handleSearchChange = (search: string) => {
     setSearchQuery(search);
@@ -55,11 +56,11 @@ const DashboardModuleView = () => {
               placeholder="Search by module title"
             />
 
-            {/* <DashboardTextSelector
+            <DashboardTextSelector
               pageSize={pageSize}
               setPageSize={setPageSize}
-              limit={data?.meta?.limit}
-            /> */}
+              limit={moduleData?.meta?.limit}
+            />
           </div>
         </div>
       </div>
