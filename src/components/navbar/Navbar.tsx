@@ -1,10 +1,23 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { setUser } from "@/redux/Slices/userSlice";
+import { getUserInfo, logOut } from "@/utils/auth";
 import Link from "next/link";
-import { useState } from "react";
+import { useActionState, useState } from "react";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const dispatch = useAppDispatch();
+  const user: any = getUserInfo();
+  // const user = useAppSelector((state) => state.user.user);
+  // // Removed incorrect useActionState usage
+  // console.log("User Info:", user);
+  const handleLogout = () => {
+    logOut();
+    dispatch(setUser({ userId: null, email: null, role: null }));
+  };
 
   return (
     <nav className="bg-white shadow-sm border-b">
@@ -36,12 +49,21 @@ export default function Navbar() {
               >
                 Dashboard
               </Link>
-              <Link
-                href="/signin"
-                className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
-              >
-                Login
-              </Link>
+              {user ? (
+                <button
+                  onClick={() => handleLogout()}
+                  className=" px-4 py-1 bg-primary text-white rounded  cursor-pointer"
+                >
+                  Logout
+                </button>
+              ) : (
+                <Link
+                  href="/signin"
+                  className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                >
+                  Login
+                </Link>
+              )}
             </div>
           </div>
 

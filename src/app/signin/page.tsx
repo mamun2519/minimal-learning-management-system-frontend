@@ -35,7 +35,7 @@ export default function SigninPage() {
       if (result?.token) {
         dispatch(
           setUser({
-            userId: result?.user?.id,
+            userId: result?.user?._id,
             email: result?.user?.email,
             role: result?.user?.role,
           })
