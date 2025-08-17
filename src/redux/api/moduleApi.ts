@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseApi } from "./baseApi";
 
-export const courseApi = baseApi.injectEndpoints({
+export const moduleApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllModule: builder.query({
       query: (arg: Record<string, any>) => ({
@@ -55,4 +55,4 @@ export const {
   useCreateModuleMutation,
   useUpdateModuleMutation,
   useDeleteModuleMutation,
-} = courseApi;
+} = moduleApi;

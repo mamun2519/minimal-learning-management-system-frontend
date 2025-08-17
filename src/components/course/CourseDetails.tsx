@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useRouter } from "next/navigation";
 import {
@@ -12,6 +13,10 @@ import { Button } from "@mui/material";
 import { useGetCourseByIdQuery } from "@/redux/api/courseApi";
 import Image from "next/image";
 import Loading from "@/helpers/Loading";
+import { useEnrolledCourseMutation } from "@/redux/api/enrolledCourseApi";
+import { useAppSelector } from "@/redux/hooks";
+import { getUserInfo } from "@/utils/auth";
+import Swal from "sweetalert2";
 
 const course = {
   id: "1",
@@ -52,10 +57,37 @@ const course = {
 
 const CourseDetails = ({ id }: { id: string }) => {
   const router = useRouter();
-
+  const [enrolledCourse] = useEnrolledCourseMutation();
+  // const user = useAppSelector((state) => state.user.user);
+  const user: any = getUserInfo();
+  console.log("user", user);
   const { data, isLoading } = useGetCourseByIdQuery(id);
 
   if (isLoading) return <Loading />;
+  const enrolledCourseHandler = async () => {
+    try {
+      const payload = {
+        userId: user?.id,
+        courseId: id,
+      };
+      const result = await enrolledCourse(payload);
+      console.log(result);
+      if (result.data) {
+        Swal.fire({
+          title: "Success",
+          text: "Course Enrolled Successfully",
+          icon: "success",
+        });
+        router.push("/dashboard");
+      }
+    } catch (err: any) {
+      Swal.fire({
+        title: "Error",
+        text: err?.data,
+        icon: "error",
+      });
+    }
+  };
   return (
     <div className="min-h-screen bg-background">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -218,7 +250,10 @@ const CourseDetails = ({ id }: { id: string }) => {
 
                 {/* Action Buttons */}
                 <div className="space-y-3 mb-6">
-                  <button className="w-full bg-primary hover:bg-primary/90 py-2 rounded text-white">
+                  <button
+                    onClick={() => enrolledCourseHandler()}
+                    className="w-full bg-primary hover:bg-primary/90 py-2 rounded text-white    cursor-pointer"
+                  >
                     Enroll Now
                   </button>
                 </div>
