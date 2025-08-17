@@ -136,10 +136,10 @@ const DashboardLectureView = () => {
               optionLevel="Select Course"
             />
             <Link
-              href="/dashboard/add-lecture"
+              href="/dashboard/add-module"
               className="bg-primary/90 px-4  rounded-md text-white py-2"
             >
-              Add Lecture & Module
+              Add Module & Lecture
             </Link>
           </div>
         </div>
