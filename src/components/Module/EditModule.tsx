@@ -1,9 +1,15 @@
+"use client";
 import React, { useState } from "react";
 import AddModuleFrom from "./AddModuleFrom";
 import { useFieldArray, useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import { Upload } from "lucide-react";
-import { useUpdateModuleMutation } from "@/redux/api/moduleApi";
+import {
+  useGetModuleByIdQuery,
+  useUpdateModuleMutation,
+} from "@/redux/api/moduleApi";
+import axios from "axios";
+import { URL } from "@/constants/url";
 interface ModuleFormData {
   moduleTitle: string;
 }
@@ -11,6 +17,7 @@ const EditModule = ({ id }: { id: string }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [draggedLecture, setDraggedLecture] = useState<number | null>(null);
   const [updateModule, { isLoading: isUpdating }] = useUpdateModuleMutation();
+  const { data, isLoading } = useGetModuleByIdQuery(id);
   const {
     register,
     control,
@@ -19,7 +26,7 @@ const EditModule = ({ id }: { id: string }) => {
     reset,
   } = useForm<ModuleFormData>({
     defaultValues: {
-      moduleTitle: "",
+      moduleTitle: data?.title || "",
     },
   });
 
@@ -31,17 +38,18 @@ const EditModule = ({ id }: { id: string }) => {
       const modulePayload = {
         title: data.moduleTitle,
       };
+
       // formData.append("module", JSON.stringify(modulePayload));
-      const result = await updateModule({ id, ...modulePayload }).unwrap();
+
       // If you have files to upload, append them to
       // Here you would send formData to your backend
-      console.log("[v0] Module data prepared for submission:", formData);
-      // const result = await axios.post(`${URL}module/insert`, formData, {
-      //   headers: {
-      //     "Content-Type": "multipart/form-data",
-      //   },
-      // });
-      if (result.data.success) {
+
+      const result = await axios.put(`${URL}module/${id}`, modulePayload, {
+        // headers: {
+        //   "Content-Type": "multipart/form-data",
+        // },
+      });
+      if (result?.data?.success) {
         Swal.fire({
           title: "Success",
           text: "Module Update successfully!",
@@ -70,7 +78,11 @@ const EditModule = ({ id }: { id: string }) => {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         {/* Module Title Section */}
-        <AddModuleFrom errors={errors} register={register} />
+        <AddModuleFrom
+          errors={errors}
+          register={register}
+          defaultValue={data?.title}
+        />
 
         {/* Submit Button */}
         <div className="flex justify-end">

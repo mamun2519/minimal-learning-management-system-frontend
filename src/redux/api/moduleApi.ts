@@ -30,14 +30,11 @@ export const courseApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["module"],
     }),
-    updateModule: builder.mutation({
-      query: ({ id, ...updatedCourse }) => ({
+    updateModule: builder.mutation<any, { id: string; payload: Partial<any> }>({
+      query: ({ id, payload }) => ({
         url: `module/${id}`,
         method: "PUT",
-        body: updatedCourse,
-        // headers: {
-        //   "Content-Type": "multipart/form-data",
-        // },
+        body: payload,
       }),
 
       invalidatesTags: (result, error, { id }) => [{ type: "module", id }],

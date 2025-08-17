@@ -5,8 +5,13 @@ import React from "react";
 interface AddModuleFromProps {
   register: any;
   errors: any;
+  defaultValue?: string;
 }
-const AddModuleFrom = ({ register, errors }: AddModuleFromProps) => {
+const AddModuleFrom = ({
+  register,
+  errors,
+  defaultValue = "",
+}: AddModuleFromProps) => {
   return (
     <div className="bg-card border border-border rounded-lg p-6">
       <h2 className="text-xl font-semibold text-card-foreground mb-4 flex items-center gap-2">
@@ -23,6 +28,7 @@ const AddModuleFrom = ({ register, errors }: AddModuleFromProps) => {
         </label>
         <input
           id="moduleTitle"
+          defaultValue={defaultValue}
           type="text"
           {...register("moduleTitle", {
             required: "Module title is required",
