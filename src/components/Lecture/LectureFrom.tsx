@@ -8,6 +8,7 @@ interface LectureFromProps {
   register: any;
   errors: any;
   addLecture: () => void;
+  isAddLectureDisabled?: boolean;
 }
 const LectureFrom = ({
   fields,
@@ -15,6 +16,7 @@ const LectureFrom = ({
   register,
   errors,
   addLecture,
+  isAddLectureDisabled = true,
 }: LectureFromProps) => {
   return (
     <div className="bg-card border border-border rounded-lg p-6">
@@ -23,14 +25,16 @@ const LectureFrom = ({
           <Video className="h-5 w-5" />
           Lectures ({fields.length})
         </h2>
-        <button
-          type="button"
-          onClick={addLecture}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-        >
-          <Plus className="h-4 w-4" />
-          Add Lecture
-        </button>
+        {isAddLectureDisabled && (
+          <button
+            type="button"
+            onClick={addLecture}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+          >
+            <Plus className="h-4 w-4" />
+            Add Lecture
+          </button>
+        )}
       </div>
 
       <div className="space-y-6">

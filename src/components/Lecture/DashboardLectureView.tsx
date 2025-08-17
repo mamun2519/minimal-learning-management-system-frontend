@@ -134,7 +134,7 @@ const DashboardLectureView = () => {
       {/* Mobile Card View */}
       <div className="lg:hidden">
         <div className="divide-y divide-border">
-          {lectureData.map((lecture) => (
+          {lectureData.map((lecture: any) => (
             <div key={lecture._id} className="p-4">
               <div className="flex items-start gap-4">
                 <div className="flex-1 min-w-0">
@@ -159,7 +159,7 @@ const DashboardLectureView = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <Link
-                      href={`/dashboard/all-course/update-course/${lecture._id}`}
+                      href={`/dashboard/all-lecture/edit/${lecture._id}`}
                       className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg pointer"
                     >
                       <Edit className="h-4 w-4" />

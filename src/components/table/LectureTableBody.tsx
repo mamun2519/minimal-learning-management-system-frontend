@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Edit, Eye, Trash } from "lucide-react";
 import Link from "next/link";
 import React from "react";
@@ -43,7 +44,7 @@ const LectureTableBody = ({ lectureData }: LectureTableBodyProps) => {
             <div className="flex items-center gap-2">
               <Eye className="h-4 w-4" />
               <Link
-                href={`/dashboard/all-course/update-course/${lecture._id}`}
+                href={`/dashboard/all-lecture/edit/${lecture._id}`}
                 className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg pointer"
               >
                 <Edit className="h-4 w-4" />
