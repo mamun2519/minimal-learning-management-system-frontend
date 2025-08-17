@@ -32,15 +32,11 @@ const CustomInput = ({
           className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
           {...register(name, {
             required: errorMessage,
-            pattern: {
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: "Invalid email address",
-            },
           })}
         />
       </div>
-      {errors.email && (
-        <p className="text-sm text-red-600">{errors.email.message}</p>
+      {errors[name] && (
+        <p className="text-sm text-red-600">{errors[name].message}</p>
       )}
     </div>
   );
