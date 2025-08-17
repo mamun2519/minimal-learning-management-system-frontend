@@ -22,7 +22,6 @@ interface ModuleFormData {
 }
 const EditLectureForm = ({ id }: { id: string }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [draggedLecture, setDraggedLecture] = useState<number | null>(null);
   const { data, isLoading } = useGetLectureByIdQuery(id);
 
   console.log("Lecture Data:", data);
@@ -61,7 +60,7 @@ const EditLectureForm = ({ id }: { id: string }) => {
           courseId: id,
         };
 
-        formData.append("lectures", JSON.stringify(lecturePayload));
+        formData.append("lecture", JSON.stringify(lecturePayload));
         if (lecture.pdfNotes) {
           Array.from(lecture.pdfNotes).forEach((file) => {
             formData.append(`files`, file);
@@ -69,9 +68,7 @@ const EditLectureForm = ({ id }: { id: string }) => {
         }
       });
 
-      // Here you would send formData to your backend
-      console.log("[v0] Module data prepared for submission:", formData);
-      const result = await axios.post(`${URL}module/insert`, formData, {
+      const result = await axios.put(`${URL}lecture/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -79,7 +76,7 @@ const EditLectureForm = ({ id }: { id: string }) => {
       if (result.data.success) {
         Swal.fire({
           title: "Success",
-          text: "Module and Lecture created successfully!",
+          text: "Lecture Update successfully!",
           icon: "success",
         });
         reset();
@@ -138,7 +135,7 @@ const EditLectureForm = ({ id }: { id: string }) => {
             ) : (
               <>
                 <Upload className="h-4 w-4" />
-                Upload Module
+                Update Lecture
               </>
             )}
           </button>
