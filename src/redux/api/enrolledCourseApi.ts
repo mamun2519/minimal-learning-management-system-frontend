@@ -10,16 +10,16 @@ export const enrolledCourseApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["user", "enrolledCourse"],
     }),
-    myCourses: build.mutation({
-      query: (RegData) => ({
-        url: "auth/register",
-        method: "POST",
-        data: RegData,
+    myCourses: build.query({
+      query: () => ({
+        url: "enrolled-course",
+        method: "GET",
       }),
-      invalidatesTags: ["user", "admin", "enrolledCourse"],
+      // invalidatesTags: ["user", "admin", "enrolledCourse"],
+      providesTags: ["user", "admin", "enrolledCourse"],
     }),
   }),
 });
 
-export const { useEnrolledCourseMutation, useMyCoursesMutation } =
+export const { useEnrolledCourseMutation, useMyCoursesQuery } =
   enrolledCourseApi;

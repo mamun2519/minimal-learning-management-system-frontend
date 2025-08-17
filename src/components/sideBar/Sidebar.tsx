@@ -14,6 +14,9 @@ import {
   Calendar,
   MessageSquare,
 } from "lucide-react";
+import { getUserInfo } from "@/utils/auth";
+import { IUser } from "@/types/user";
+import { JwtPayload } from "jwt-decode";
 
 const menuItems = [
   { icon: Home, label: "Dashboard", href: "/dashboard" },
@@ -34,10 +37,18 @@ const menuItems = [
   { icon: Settings, label: "Home", href: "/" },
 ];
 
+const userItems = [
+  { icon: Home, label: "Dashboard", href: "/dashboard" },
+  { icon: BookOpen, label: "My Courses", href: "/dashboard/my-course" },
+
+  { icon: Settings, label: "Home", href: "/" },
+];
+
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-
+  const user: any = getUserInfo();
+  console.log("User Info:", user);
   return (
     <>
       {/* Mobile menu button */}
@@ -72,29 +83,56 @@ const Sidebar = () => {
 
           {/* Navigation */}
           <nav className="flex-1 p-4">
-            <ul className="space-y-2">
-              {menuItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = pathname === item.href;
+            {user?.role == "user" && (
+              <ul className="space-y-2">
+                {userItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = pathname === item.href;
 
-                return (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      onClick={() => setIsOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                        isActive
-                          ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                          : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                      }`}
-                    >
-                      <Icon className="h-5 w-5" />
-                      {item.label}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        onClick={() => setIsOpen(false)}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                          isActive
+                            ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                            : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                        }`}
+                      >
+                        <Icon className="h-5 w-5" />
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+            {user.role === "admin" && (
+              <ul className="space-y-2">
+                {menuItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = pathname === item.href;
+
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        onClick={() => setIsOpen(false)}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                          isActive
+                            ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                            : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                        }`}
+                      >
+                        <Icon className="h-5 w-5" />
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </nav>
 
           {/* User info */}
@@ -105,9 +143,9 @@ const Sidebar = () => {
               </div>
               <div>
                 <p className="text-sm font-medium text-sidebar-foreground">
-                  John Doe
+                  {user?.email}
                 </p>
-                <p className="text-xs text-muted-foreground">Admin</p>
+                <p className="text-xs text-muted-foreground">{user?.role}</p>
               </div>
             </div>
           </div>
