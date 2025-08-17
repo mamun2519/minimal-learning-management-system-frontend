@@ -11,25 +11,55 @@ import TableHead from "../table/TableHead";
 import LectureTableBody from "../table/LectureTableBody";
 import { Edit, Trash2 } from "lucide-react";
 import { Pagination } from "@mui/material";
+import { useGetAllModuleQuery } from "@/redux/api/moduleApi";
+import DashboardSelector from "../textInput/DashboardSelector";
+import { useGetCoursesQuery } from "@/redux/api/courseApi";
 
 const DashboardLectureView = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [selectedModule, setSelectedModule] = useState("");
+  const [selectedCourse, setSelectedCourse] = useState("");
 
   const query: Record<string, any> = {};
   if (searchQuery) {
     query["searchTerm"] = searchQuery;
   }
+  if (selectedModule) {
+    query["moduleId"] = selectedModule;
+  }
+  if (selectedCourse) {
+    query["courseId"] = selectedCourse;
+  }
   query["page"] = currentPage;
   query["limit"] = pageSize;
   const { data, isLoading } = useGetAllLectureQuery(query);
-  console.log(data);
+  const { data: moduleData } = useGetAllModuleQuery({});
+  const { data: courseData } = useGetCoursesQuery({});
+  const courseDataMap = courseData?.data.map(
+    (course: { _id: string; title: string }) => {
+      return {
+        value: course._id,
+        label: course.title,
+      };
+    }
+  );
+  console.log("courseDataMap", courseDataMap);
+
   if (isLoading) return <Loading />;
 
   const totalPage = data?.meta?.totalPages || 1;
   const lectureData = data || [];
-  console.log(lectureData);
+  const moduleDataMap = moduleData.data.map(
+    (module: { _id: string; title: string }) => {
+      return {
+        value: module._id,
+        label: module.title,
+      };
+    }
+  );
+  console.log("moduleDataMap", moduleDataMap);
   const handleSearchChange = (search: string) => {
     setSearchQuery(search);
     setCurrentPage(1);
@@ -55,10 +85,24 @@ const DashboardLectureView = () => {
               placeholder="Search by lecture title"
             />
 
-            <DashboardTextSelector
+            {/* <DashboardTextSelector
               pageSize={pageSize}
               setPageSize={setPageSize}
               limit={data?.meta?.limit}
+            /> */}
+            <DashboardSelector
+              data={moduleDataMap}
+              setSelect={(value: string | number) => {
+                setSelectedModule(value as string);
+              }}
+              optionLevel="Select Module"
+            />
+            <DashboardSelector
+              data={courseDataMap}
+              setSelect={(value: string | number) => {
+                setSelectedCourse(value as string);
+              }}
+              optionLevel="Select Course"
             />
             <Link
               href="/dashboard/add-lecture"
