@@ -1,4 +1,4 @@
-import { Edit, Eye } from "lucide-react";
+import { Edit, Eye, Trash } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -16,17 +16,14 @@ const LectureTableBody = ({ lectureData }: LectureTableBodyProps) => {
           <td className="py-4 px-6">
             <div className="flex items-center gap-2">
               <span className="font-semibold text-card-foreground">
-                ${lecture.title}
-              </span>
-              <span className="text-sm text-muted-foreground line-through">
-                50
+                {lecture.title}
               </span>
             </div>
           </td>
           <td className="py-4 px-6">
             <div className="flex items-center gap-2">
               <span className="font-semibold text-card-foreground">
-                ${lecture?.courseId?.title}
+                {lecture?.courseId?.title}
               </span>
             </div>
           </td>

@@ -1,3 +1,5 @@
+"use client";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Loading from "@/helpers/Loading";
 import { useGetAllLectureQuery } from "@/redux/api/lectureApi";
@@ -6,6 +8,9 @@ import DashboardSearchBar from "../textInput/DashboardSearchBar";
 import DashboardTextSelector from "../textInput/DashboardTextSelector";
 import Link from "next/link";
 import TableHead from "../table/TableHead";
+import LectureTableBody from "../table/LectureTableBody";
+import { Edit, Trash2 } from "lucide-react";
+import { Pagination } from "@mui/material";
 
 const DashboardLectureView = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -19,12 +24,12 @@ const DashboardLectureView = () => {
   query["page"] = currentPage;
   query["limit"] = pageSize;
   const { data, isLoading } = useGetAllLectureQuery(query);
-
+  console.log(data);
   if (isLoading) return <Loading />;
 
   const totalPage = data?.meta?.totalPages || 1;
-  const coursesData = data?.data || [];
-
+  const lectureData = data || [];
+  console.log(lectureData);
   const handleSearchChange = (search: string) => {
     setSearchQuery(search);
     setCurrentPage(1);
@@ -55,10 +60,10 @@ const DashboardLectureView = () => {
               limit={data?.meta?.limit}
             />
             <Link
-              href="/dashboard/all-course/add-new-course"
+              href="/dashboard/add-lecture"
               className="bg-primary/90 px-4  rounded-md text-white py-2"
             >
-              Add New Course
+              Add Lecture & Module
             </Link>
           </div>
         </div>
@@ -70,49 +75,46 @@ const DashboardLectureView = () => {
           <TableHead
             tableHeadings={[
               "lecture Title",
-              "course Title",
-              "total module",
-              "total lecture",
+              "Course Title",
+              "Total module",
+              "Total lecture",
               "Action",
             ]}
           />
 
-          <CourseTableBody coursesData={coursesData} />
+          <LectureTableBody lectureData={lectureData} />
         </table>
       </div>
 
       {/* Mobile Card View */}
       <div className="lg:hidden">
         <div className="divide-y divide-border">
-          {coursesData.map((course: ICourse) => (
-            <div key={course._id} className="p-4">
+          {lectureData.map((lecture) => (
+            <div key={lecture._id} className="p-4">
               <div className="flex items-start gap-4">
-                <Image
-                  width={64}
-                  height={64}
-                  src={course.file.url || "/placeholder.svg"}
-                  alt={course.title}
-                  className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
-                />
                 <div className="flex-1 min-w-0">
                   <h3 className="font-medium text-card-foreground mb-1">
-                    {course.title}
+                    {lecture.title}
                   </h3>
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="font-semibold text-card-foreground">
+                      {lecture.courseId?.title}
+                    </span>
+                  </div>
 
                   <div className="flex items-center gap-2 mb-3">
                     <span className="font-semibold text-card-foreground">
-                      ${course.price}
+                      10
                     </span>
-                    <span className="text-sm text-muted-foreground line-through">
-                      $100
+                  </div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="font-semibold text-card-foreground">
+                      10
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button className="inline-flex items-center gap-2 px-3 py-1 bg-primary text-primary-foreground rounded-lg text-sm">
-                      Add Module
-                    </button>
                     <Link
-                      href={`/dashboard/all-course/update-course/${course._id}`}
+                      href={`/dashboard/all-course/update-course/${lecture._id}`}
                       className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg pointer"
                     >
                       <Edit className="h-4 w-4" />
