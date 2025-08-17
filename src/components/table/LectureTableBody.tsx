@@ -5,6 +5,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import Swal from "sweetalert2";
 import DeleteModal from "../ui/DeleteModal";
+import { useDeleteLectureMutation } from "@/redux/api/lectureApi";
 
 interface LectureTableBodyProps {
   lectureData: any[]; // Replace 'any' with the actual type of your lecture data
@@ -12,10 +13,10 @@ interface LectureTableBodyProps {
 const LectureTableBody = ({ lectureData }: LectureTableBodyProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [id, setId] = useState<string>("");
-  const [deleteCourse, {}] = useDeleteCourseMutation();
+  const [deleteLecture, {}] = useDeleteLectureMutation();
 
   const handleDeleteConfirm = async () => {
-    const response = await deleteCourse(id);
+    const response = await deleteLecture(id);
     if (response?.data) {
       Swal.fire({
         title: "Success",

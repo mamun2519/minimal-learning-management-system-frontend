@@ -2,7 +2,10 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Loading from "@/helpers/Loading";
-import { useGetAllLectureQuery } from "@/redux/api/lectureApi";
+import {
+  useDeleteLectureMutation,
+  useGetAllLectureQuery,
+} from "@/redux/api/lectureApi";
 import React, { useState } from "react";
 import DashboardSearchBar from "../textInput/DashboardSearchBar";
 import DashboardTextSelector from "../textInput/DashboardTextSelector";
@@ -14,6 +17,8 @@ import { Pagination } from "@mui/material";
 import { useGetAllModuleQuery } from "@/redux/api/moduleApi";
 import DashboardSelector from "../textInput/DashboardSelector";
 import { useGetCoursesQuery } from "@/redux/api/courseApi";
+import Swal from "sweetalert2";
+import DeleteModal from "../ui/DeleteModal";
 
 const DashboardLectureView = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -21,6 +26,9 @@ const DashboardLectureView = () => {
   const [pageSize, setPageSize] = useState(10);
   const [selectedModule, setSelectedModule] = useState("");
   const [selectedCourse, setSelectedCourse] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [id, setId] = useState<string>("");
+  const [deleteLecture, {}] = useDeleteLectureMutation();
 
   const query: Record<string, any> = {};
   if (searchQuery) {
@@ -67,6 +75,29 @@ const DashboardLectureView = () => {
 
   const handlePageChange = (event: any, page: any) => {
     setCurrentPage(page);
+  };
+
+  const handleDeleteConfirm = async () => {
+    const response = await deleteLecture(id);
+    if (response?.data) {
+      Swal.fire({
+        title: "Success",
+        text: "Lecture delete successfully!",
+        icon: "success",
+      });
+      setIsDeleting(false);
+      setId(id);
+    }
+  };
+
+  const handleDeleteClick = (id: string) => {
+    setIsDeleting(true);
+    setId(id);
+  };
+
+  const handleDeleteCancel = () => {
+    setIsDeleting(false);
+    setId(id);
   };
   return (
     <div className="bg-card border border-border rounded-lg">
@@ -164,7 +195,10 @@ const DashboardLectureView = () => {
                     >
                       <Edit className="h-4 w-4" />
                     </Link>
-                    <button className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg">
+                    <button
+                      onClick={() => handleDeleteClick(lecture._id)}
+                      className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg"
+                    >
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
@@ -174,7 +208,16 @@ const DashboardLectureView = () => {
           ))}
         </div>
       </div>
-
+      {isDeleting && (
+        <DeleteModal
+          isOpen={isDeleting}
+          onClose={handleDeleteCancel}
+          onConfirm={handleDeleteConfirm}
+          title="Delete Lecture"
+          description="This will permanently remove the lecture and all its associated data. This action cannot be undone."
+          isLoading={isDeleting}
+        />
+      )}
       {/* // Pagination */}
       <div className="flex justify-center py-8">
         <Pagination
