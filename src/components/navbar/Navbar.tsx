@@ -36,12 +36,12 @@ export default function Navbar() {
               >
                 Dashboard
               </Link>
-              <a
-                href="#"
-                className="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              <Link
+                href="/signin"
+                className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
-                Contact
-              </a>
+                Login
+              </Link>
             </div>
           </div>
 

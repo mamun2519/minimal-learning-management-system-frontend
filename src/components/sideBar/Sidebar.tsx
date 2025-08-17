@@ -30,10 +30,8 @@ const menuItems = [
     label: "Add Module & Lecture",
     href: "/dashboard/add-module",
   },
-  { icon: Calendar, label: "Schedule", href: "/dashboard/add-module" },
-  { icon: MessageSquare, label: "Messages", href: "/dashboard/messages" },
-  { icon: User, label: "Profile", href: "/dashboard/profile" },
-  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
+
+  { icon: Settings, label: "Home", href: "/" },
 ];
 
 const Sidebar = () => {
