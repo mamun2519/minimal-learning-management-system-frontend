@@ -11,12 +11,8 @@ import {
   Menu,
   X,
   User,
-  Calendar,
-  MessageSquare,
 } from "lucide-react";
 import { getUserInfo } from "@/utils/auth";
-import { IUser } from "@/types/user";
-import { JwtPayload } from "jwt-decode";
 
 const menuItems = [
   { icon: Home, label: "Dashboard", href: "/dashboard" },
@@ -48,7 +44,7 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const user: any = getUserInfo();
-  console.log("User Info:", user);
+  // console.log("User Info:", user);
   return (
     <>
       {/* Mobile menu button */}

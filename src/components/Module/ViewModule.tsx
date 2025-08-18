@@ -1,7 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useState } from "react";
+import {
+  JSXElementConstructor,
+  Key,
+  ReactElement,
+  ReactNode,
+  ReactPortal,
+  useEffect,
+  useState,
+} from "react";
 import { useRouter } from "next/navigation";
-// import { Button } from "mu";
+
 import {
   ArrowLeft,
   Lock,
@@ -11,118 +20,109 @@ import {
   ChevronRight,
   ChevronDown,
   ChevronUp,
+  FileText,
+  Download,
 } from "lucide-react";
+import {
+  useCompleteLectureMutation,
+  useGetAllLectureByClassIdQuery,
+} from "@/redux/api/lectureApi";
 import { Button } from "@mui/material";
-import { useGetAllLectureByClassIdQuery } from "@/redux/api/lectureApi";
+import Loading from "@/helpers/Loading";
 
-const courseModules = [
-  {
-    id: 1,
-    title: "Getting Started",
-    lectures: [
-      {
-        id: 1,
-        title: "Introduction to Web Development",
-        duration: "12:34",
-        youtubeId: "dQw4w9WgXcQ",
-        isCompleted: false,
-        isUnlocked: true,
-      },
-      {
-        id: 2,
-        title: "Setting Up Development Environment",
-        duration: "15:20",
-        youtubeId: "dQw4w9WgXcQ",
-        isCompleted: false,
-        isUnlocked: false,
-      },
-    ],
-  },
-  {
-    id: 2,
-    title: "HTML Fundamentals",
-    lectures: [
-      {
-        id: 3,
-        title: "HTML Structure and Elements",
-        duration: "18:45",
-        youtubeId: "dQw4w9WgXcQ",
-        isCompleted: false,
-        isUnlocked: false,
-      },
-      {
-        id: 4,
-        title: "Forms and Input Elements",
-        duration: "16:30",
-        youtubeId: "dQw4w9WgXcQ",
-        isCompleted: false,
-        isUnlocked: false,
-      },
-    ],
-  },
-  {
-    id: 3,
-    title: "CSS Styling",
-    lectures: [
-      {
-        id: 5,
-        title: "CSS Basics and Selectors",
-        duration: "22:15",
-        youtubeId: "dQw4w9WgXcQ",
-        isCompleted: false,
-        isUnlocked: false,
-      },
-      {
-        id: 6,
-        title: "Flexbox and Grid Layout",
-        duration: "28:40",
-        youtubeId: "dQw4w9WgXcQ",
-        isCompleted: false,
-        isUnlocked: false,
-      },
-    ],
-  },
-  {
-    id: 4,
-    title: "JavaScript Programming",
-    lectures: [
-      {
-        id: 7,
-        title: "JavaScript Introduction",
-        duration: "25:30",
-        youtubeId: "dQw4w9WgXcQ",
-        isCompleted: false,
-        isUnlocked: false,
-      },
-      {
-        id: 8,
-        title: "DOM Manipulation",
-        duration: "19:20",
-        youtubeId: "dQw4w9WgXcQ",
-        isCompleted: false,
-        isUnlocked: false,
-      },
-    ],
-  },
-];
+const extractYouTubeId = (url: string): string => {
+  if (!url.includes("youtube.com") && !url.includes("youtu.be")) {
+    return "";
+  }
+  const regex =
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/;
+  const match = url.match(regex);
+  return match ? match[1] : "";
+};
 
 export default function ViewModule({ id }: { id: string }) {
   const router = useRouter();
-  const [modules, setModules] = useState(courseModules);
-
   const query: Record<string, any> = {};
   if (id) {
     query["courseId"] = id;
   }
+  const [completeLecture] = useCompleteLectureMutation();
 
-  const { data } = useGetAllLectureByClassIdQuery(query);
-  console.log("data", data);
+  const { data: courseData, isLoading } = useGetAllLectureByClassIdQuery(query);
+
+  const [modules, setModules] = useState<any[]>([]);
+
   const [currentLecture, setCurrentLecture] = useState({
     moduleIndex: 0,
     lectureIndex: 0,
   });
+
   const [showSidebar, setShowSidebar] = useState(true);
-  const [collapsedModules, setCollapsedModules] = useState<number[]>([]);
+  const [collapsedModules, setCollapsedModules] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (courseData && courseData.length > 0) {
+      console.log("Raw courseData from API:", courseData);
+
+      // Process the data to ensure proper unlock states
+      const processedModules = courseData.map(
+        (module: { lectures: any[] }, moduleIndex: any) => ({
+          ...module,
+          lectures: module.lectures.map((lecture, lectureIndex) => ({
+            ...lecture,
+            isCompleted: lecture.isCompleted || false,
+            isUnlocked: lecture.isUnlocked || false,
+          })),
+        })
+      );
+
+      // Create a flat array of all lectures with their positions
+      const allLectures: any = [];
+      processedModules.forEach(
+        (module: { lectures: any[] }, moduleIndex: any) => {
+          module.lectures.forEach((lecture, lectureIndex) => {
+            allLectures.push({
+              ...lecture,
+              moduleIndex,
+              lectureIndex,
+              globalIndex: allLectures.length,
+            });
+          });
+        }
+      );
+
+      // Process unlock states sequentially
+      allLectures.forEach(
+        (
+          lecture: {
+            moduleIndex: string | number;
+            lectureIndex: string | number;
+            isCompleted: any;
+          },
+          globalIndex: number
+        ) => {
+          if (globalIndex === 0) {
+            // First lecture is always unlocked
+            processedModules[lecture.moduleIndex].lectures[
+              lecture.lectureIndex
+            ].isUnlocked = true;
+          } else {
+            const prevLecture = allLectures[globalIndex - 1];
+            // Unlock if the previous lecture is completed OR if already unlocked/completed
+            const shouldUnlock = prevLecture.isCompleted || lecture.isCompleted;
+            processedModules[lecture.moduleIndex].lectures[
+              lecture.lectureIndex
+            ].isUnlocked = shouldUnlock;
+          }
+        }
+      );
+
+      console.log("Processed modules:", processedModules);
+      setModules(processedModules);
+    }
+  }, [courseData]);
+
+  if (isLoading) return <Loading />;
 
   const getCurrentLecture = () => {
     return modules[currentLecture.moduleIndex]?.lectures[
@@ -134,10 +134,10 @@ export default function ViewModule({ id }: { id: string }) {
     return modules.flatMap((module) => module.lectures);
   };
 
-  const findLecturePosition = (lectureId: number) => {
+  const findLecturePosition = (lectureId: string) => {
     for (let moduleIndex = 0; moduleIndex < modules.length; moduleIndex++) {
       const lectureIndex = modules[moduleIndex].lectures.findIndex(
-        (lecture) => lecture.id === lectureId
+        (lecture: { _id: string }) => lecture._id === lectureId
       );
       if (lectureIndex !== -1) {
         return { moduleIndex, lectureIndex };
@@ -146,42 +146,93 @@ export default function ViewModule({ id }: { id: string }) {
     return null;
   };
 
-  const currentLectureData = getCurrentLecture();
-
-  const handleVideoComplete = () => {
-    const updatedModules = [...modules];
-    updatedModules[currentLecture.moduleIndex].lectures[
-      currentLecture.lectureIndex
-    ].isCompleted = true;
-
-    const allLectures = getAllLectures();
-    const currentGlobalIndex = allLectures.findIndex(
-      (lecture) => lecture.id === currentLectureData.id
-    );
-
-    if (currentGlobalIndex + 1 < allLectures.length) {
-      const nextLecture = allLectures[currentGlobalIndex + 1];
-      const nextPosition = findLecturePosition(nextLecture.id);
-      if (nextPosition) {
-        updatedModules[nextPosition.moduleIndex].lectures[
-          nextPosition.lectureIndex
-        ].isUnlocked = true;
-      }
+  // Helper function to get next lecture
+  const getNextLecture = (
+    moduleIndex: number,
+    lectureIndex: number,
+    modulesArray: any[]
+  ) => {
+    // Check if there's a next lecture in current module
+    if (lectureIndex + 1 < modulesArray[moduleIndex].lectures.length) {
+      return modulesArray[moduleIndex].lectures[lectureIndex + 1];
     }
 
-    setModules(updatedModules);
+    // Check if there's a next module
+    if (
+      moduleIndex + 1 < modulesArray.length &&
+      modulesArray[moduleIndex + 1].lectures.length > 0
+    ) {
+      return modulesArray[moduleIndex + 1].lectures[0];
+    }
+
+    return null;
+  };
+
+  const currentLectureData = getCurrentLecture();
+
+  const handleVideoComplete = async () => {
+    try {
+      // 1️⃣ Call backend to mark lecture as completed
+      await completeLecture({
+        courseId: currentLectureData.courseId,
+        lectureId: currentLectureData._id,
+      }).unwrap();
+
+      // 2️⃣ Update the current lecture as completed
+      const updatedModules = [...modules];
+      updatedModules[currentLecture.moduleIndex].lectures[
+        currentLecture.lectureIndex
+      ].isCompleted = true;
+
+      // 3️⃣ Find and unlock the next lecture
+      const nextLecture = getNextLecture(
+        currentLecture.moduleIndex,
+        currentLecture.lectureIndex,
+        updatedModules
+      );
+      if (nextLecture) {
+        const nextPosition = findLecturePosition(nextLecture._id);
+        if (nextPosition) {
+          updatedModules[nextPosition.moduleIndex].lectures[
+            nextPosition.lectureIndex
+          ].isUnlocked = true;
+        }
+      }
+
+      // 4️⃣ Save state
+      setModules(updatedModules);
+
+      console.log("Lecture completed and next unlocked:", updatedModules);
+    } catch (error) {
+      console.error("Failed to mark lecture complete:", error);
+    }
   };
 
   const handleNextVideo = () => {
     const allLectures = getAllLectures();
+
+    if (!allLectures?.length || !currentLectureData?._id) return;
+
     const currentGlobalIndex = allLectures.findIndex(
-      (lecture) => lecture.id === currentLectureData.id
+      (lecture) => lecture._id === currentLectureData._id
     );
 
-    if (currentGlobalIndex + 1 < allLectures.length) {
-      const nextLecture = allLectures[currentGlobalIndex + 1];
-      const nextPosition = findLecturePosition(nextLecture.id);
-      if (nextPosition && nextLecture.isUnlocked) {
+    if (currentGlobalIndex === -1) return;
+
+    // Find the next unlocked lecture
+    let nextIndex = currentGlobalIndex + 1;
+    while (
+      nextIndex < allLectures.length &&
+      !allLectures[nextIndex].isUnlocked
+    ) {
+      nextIndex++;
+    }
+
+    if (nextIndex < allLectures.length) {
+      const nextLecture = allLectures[nextIndex];
+      const nextPosition = findLecturePosition(nextLecture._id);
+
+      if (nextPosition) {
         setCurrentLecture(nextPosition);
       }
     }
@@ -189,12 +240,15 @@ export default function ViewModule({ id }: { id: string }) {
 
   const handleLectureSelect = (moduleIndex: number, lectureIndex: number) => {
     const lecture = modules[moduleIndex].lectures[lectureIndex];
+    console.log("Attempting to select lecture:", lecture);
     if (lecture.isUnlocked) {
       setCurrentLecture({ moduleIndex, lectureIndex });
+    } else {
+      console.log("Lecture is locked");
     }
   };
 
-  const toggleModule = (moduleId: number) => {
+  const toggleModule = (moduleId: string) => {
     setCollapsedModules((prev) =>
       prev.includes(moduleId)
         ? prev.filter((id) => id !== moduleId)
@@ -220,7 +274,6 @@ export default function ViewModule({ id }: { id: string }) {
           <div className="bg-card border-b border-border p-4">
             <div className="flex items-center justify-between">
               <Button
-                //     variant="ghost"
                 onClick={() => router.back()}
                 className="flex items-center gap-2"
               >
@@ -228,7 +281,6 @@ export default function ViewModule({ id }: { id: string }) {
                 Back to Course
               </Button>
               <Button
-                //     variant="ghost"
                 onClick={() => setShowSidebar(!showSidebar)}
                 className="lg:hidden flex items-center gap-2"
               >
@@ -243,7 +295,9 @@ export default function ViewModule({ id }: { id: string }) {
             <div className="aspect-video bg-black rounded-lg mb-6 relative overflow-hidden">
               {currentLectureData?.isUnlocked ? (
                 <iframe
-                  src={`https://www.youtube.com/embed/${currentLectureData.youtubeId}?enablejsapi=1`}
+                  src={`https://www.youtube.com/embed/${extractYouTubeId(
+                    currentLectureData.videoURl
+                  )}?enablejsapi=1`}
                   title={currentLectureData.title}
                   className="w-full h-full"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -273,17 +327,58 @@ export default function ViewModule({ id }: { id: string }) {
               <div className="flex items-center gap-4 text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <PlayCircle className="h-4 w-4" />
-                  {currentLectureData?.duration}
+                  Video Lesson
                 </span>
                 <span>
                   Lesson{" "}
                   {getAllLectures().findIndex(
-                    (l) => l.id === currentLectureData?.id
+                    (l) => l._id === currentLectureData?._id
                   ) + 1}{" "}
                   of {totalLectures}
                 </span>
               </div>
             </div>
+
+            {/* PDF Notes Section */}
+            {currentLectureData?.pdfNotes &&
+              currentLectureData.pdfNotes.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    PDF Notes
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {currentLectureData.pdfNotes.map(
+                      (
+                        pdf: {
+                          _id: Key | null | undefined;
+                          url: string | undefined;
+                        },
+                        index: number
+                      ) => (
+                        <a
+                          key={pdf._id}
+                          href={pdf.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-3 p-3 bg-card border border-border rounded-lg hover:bg-muted/50 transition-colors"
+                        >
+                          <FileText className="h-8 w-8 text-primary flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-foreground truncate">
+                              PDF Note {index + 1}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Click to download
+                            </p>
+                          </div>
+                          <Download className="h-4 w-4 text-muted-foreground" />
+                        </a>
+                      )
+                    )}
+                  </div>
+                </div>
+              )}
 
             {/* Action Buttons */}
             <div className="flex flex-wrap gap-3">
@@ -299,7 +394,7 @@ export default function ViewModule({ id }: { id: string }) {
 
               {currentLectureData?.isCompleted &&
                 getAllLectures().findIndex(
-                  (l) => l.id === currentLectureData?.id
+                  (l) => l._id === currentLectureData?._id
                 ) +
                   1 <
                   totalLectures && (
@@ -314,7 +409,7 @@ export default function ViewModule({ id }: { id: string }) {
 
               {currentLectureData?.isCompleted &&
                 getAllLectures().findIndex(
-                  (l) => l.id === currentLectureData?.id
+                  (l) => l._id === currentLectureData?._id
                 ) +
                   1 >=
                   totalLectures && (
@@ -338,8 +433,6 @@ export default function ViewModule({ id }: { id: string }) {
                 Course Content
               </h2>
               <Button
-                //     variant="ghost"
-                //     size="sm"
                 onClick={() => setShowSidebar(false)}
                 className="lg:hidden"
               >
@@ -353,22 +446,26 @@ export default function ViewModule({ id }: { id: string }) {
 
           <div className="overflow-y-auto h-full pb-20">
             {modules.map((module, moduleIndex) => (
-              <div key={module.id} className="border-b border-border">
+              <div key={module._id} className="border-b border-border">
                 {/* Module Header */}
                 <div
                   className="p-4 cursor-pointer hover:bg-muted/50 flex items-center justify-between"
-                  onClick={() => toggleModule(module.id)}
+                  onClick={() => toggleModule(module._id)}
                 >
                   <div className="flex-1">
                     <h3 className="font-semibold text-foreground">
                       {module.title}
                     </h3>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {module.lectures.filter((l) => l.isCompleted).length} of{" "}
-                      {module.lectures.length} completed
+                      {
+                        module.lectures.filter(
+                          (l: { isCompleted: any }) => l.isCompleted
+                        ).length
+                      }{" "}
+                      of {module.lectures.length} completed
                     </p>
                   </div>
-                  {collapsedModules.includes(module.id) ? (
+                  {collapsedModules.includes(module._id) ? (
                     <ChevronDown className="h-4 w-4 text-muted-foreground" />
                   ) : (
                     <ChevronUp className="h-4 w-4 text-muted-foreground" />
@@ -376,52 +473,100 @@ export default function ViewModule({ id }: { id: string }) {
                 </div>
 
                 {/* Module Lectures */}
-                {!collapsedModules.includes(module.id) && (
+                {!collapsedModules.includes(module._id) && (
                   <div className="bg-muted/20">
-                    {module.lectures.map((lecture, lectureIndex) => (
-                      <div
-                        key={lecture.id}
-                        className={`p-4 pl-8 border-b border-border/50 cursor-pointer transition-colors ${
-                          moduleIndex === currentLecture.moduleIndex &&
-                          lectureIndex === currentLecture.lectureIndex
-                            ? "bg-primary/10 border-l-4 border-l-primary"
-                            : "hover:bg-muted/50"
-                        } ${
-                          !lecture.isUnlocked
-                            ? "opacity-50 cursor-not-allowed"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleLectureSelect(moduleIndex, lectureIndex)
-                        }
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className="flex-shrink-0 mt-1">
-                            {lecture.isCompleted ? (
-                              <CheckCircle className="h-5 w-5 text-green-500" />
-                            ) : lecture.isUnlocked ? (
-                              <PlayCircle className="h-5 w-5 text-primary" />
-                            ) : (
-                              <Lock className="h-5 w-5 text-muted-foreground" />
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h4
-                              className={`font-medium text-sm mb-1 ${
-                                lecture.isUnlocked
-                                  ? "text-foreground"
-                                  : "text-muted-foreground"
-                              }`}
-                            >
-                              {lecture.title}
-                            </h4>
-                            <p className="text-xs text-muted-foreground">
-                              {lecture.duration}
-                            </p>
+                    {module.lectures.map(
+                      (
+                        lecture: {
+                          _id: Key | null | undefined;
+                          isUnlocked: any;
+                          isCompleted: any;
+                          title:
+                            | string
+                            | number
+                            | bigint
+                            | boolean
+                            | ReactElement<
+                                unknown,
+                                string | JSXElementConstructor<any>
+                              >
+                            | Iterable<ReactNode>
+                            | ReactPortal
+                            | Promise<
+                                | string
+                                | number
+                                | bigint
+                                | boolean
+                                | ReactPortal
+                                | ReactElement<
+                                    unknown,
+                                    string | JSXElementConstructor<any>
+                                  >
+                                | Iterable<ReactNode>
+                                | null
+                                | undefined
+                              >
+                            | null
+                            | undefined;
+                          pdfNotes: string | any[];
+                        },
+                        lectureIndex: number
+                      ) => (
+                        <div
+                          key={lecture._id}
+                          className={`p-4 pl-8 border-b border-border/50 cursor-pointer transition-colors ${
+                            moduleIndex === currentLecture.moduleIndex &&
+                            lectureIndex === currentLecture.lectureIndex
+                              ? "bg-primary/10 border-l-4 border-l-primary"
+                              : "hover:bg-muted/50"
+                          } ${
+                            !lecture.isUnlocked
+                              ? "opacity-50 cursor-not-allowed"
+                              : ""
+                          }`}
+                          onClick={() =>
+                            handleLectureSelect(moduleIndex, lectureIndex)
+                          }
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="flex-shrink-0 mt-1">
+                              {lecture.isCompleted ? (
+                                <CheckCircle className="h-5 w-5 text-green-500" />
+                              ) : lecture.isUnlocked ? (
+                                <PlayCircle className="h-5 w-5 text-primary" />
+                              ) : (
+                                <Lock className="h-5 w-5 text-muted-foreground" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4
+                                className={`font-medium text-sm mb-1 ${
+                                  lecture.isUnlocked
+                                    ? "text-foreground"
+                                    : "text-muted-foreground"
+                                }`}
+                              >
+                                {lecture.title}
+                              </h4>
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <span>Video Lesson</span>
+                                {lecture.pdfNotes &&
+                                  lecture.pdfNotes.length > 0 && (
+                                    <>
+                                      <span>•</span>
+                                      <span className="flex items-center gap-1">
+                                        <FileText className="h-3 w-3" />
+                                        {lecture.pdfNotes.length} PDF
+                                        {lecture.pdfNotes.length > 1 ? "s" : ""}
+                                      </span>
+                                    </>
+                                  )}
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      )
+                    )}
                   </div>
                 )}
               </div>

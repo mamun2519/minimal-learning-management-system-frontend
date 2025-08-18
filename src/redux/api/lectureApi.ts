@@ -39,6 +39,17 @@ export const lectureApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["lecture"],
     }),
+    completeLecture: builder.mutation({
+      query: (lectureData) => ({
+        url: "lecture/complete",
+        method: "POST",
+        data: lectureData,
+        // headers: {
+        //   "Content-Type": "multipart/form-data",
+        // },
+      }),
+      invalidatesTags: ["lecture"],
+    }),
     updateLecture: builder.mutation({
       query: ({ id, ...updatedCourse }) => ({
         url: `lecture/${id}`,
@@ -68,4 +79,5 @@ export const {
   useUpdateLectureMutation,
   useDeleteLectureMutation,
   useGetAllLectureByClassIdQuery,
+  useCompleteLectureMutation,
 } = lectureApi;
