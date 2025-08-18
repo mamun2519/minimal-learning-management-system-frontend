@@ -273,13 +273,13 @@ export default function ViewModule({ id }: { id: string }) {
           {/* Header */}
           <div className="bg-card border-b border-border p-4">
             <div className="flex items-center justify-between">
-              <Button
+              <button
                 onClick={() => router.back()}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2   bg-primary text-white rounded  cursor-pointer px-4 py-1"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Back to Course
-              </Button>
+              </button>
               <Button
                 onClick={() => setShowSidebar(!showSidebar)}
                 className="lg:hidden flex items-center gap-2"
@@ -340,7 +340,7 @@ export default function ViewModule({ id }: { id: string }) {
             </div>
 
             {/* PDF Notes Section */}
-            {currentLectureData?.pdfNotes &&
+            {/* {currentLectureData?.pdfNotes &&
               currentLectureData.pdfNotes.length > 0 && (
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
@@ -378,18 +378,18 @@ export default function ViewModule({ id }: { id: string }) {
                     )}
                   </div>
                 </div>
-              )}
+              )} */}
 
             {/* Action Buttons */}
             <div className="flex flex-wrap gap-3">
               {currentLectureData?.isUnlocked &&
                 !currentLectureData?.isCompleted && (
-                  <Button
+                  <button
                     onClick={handleVideoComplete}
-                    className="bg-primary hover:bg-primary/90"
+                    className=" hover:bg-primary/90 bg-primary text-white rounded  cursor-pointer"
                   >
                     Mark as Complete
-                  </Button>
+                  </button>
                 )}
 
               {currentLectureData?.isCompleted &&
@@ -398,13 +398,13 @@ export default function ViewModule({ id }: { id: string }) {
                 ) +
                   1 <
                   totalLectures && (
-                  <Button
+                  <button
                     onClick={handleNextVideo}
-                    className="bg-primary hover:bg-primary/90 flex items-center gap-2"
+                    className="hover:bg-primary/90 flex items-center gap-2 bg-primary text-white rounded  cursor-pointer px-4 py-2"
                   >
                     Next Lesson
                     <ChevronRight className="h-4 w-4" />
-                  </Button>
+                  </button>
                 )}
 
               {currentLectureData?.isCompleted &&
@@ -413,9 +413,9 @@ export default function ViewModule({ id }: { id: string }) {
                 ) +
                   1 >=
                   totalLectures && (
-                  <Button className="bg-green-600 hover:bg-green-700 text-white">
-                    Course Complete! 🎉
-                  </Button>
+                  <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                    Course Complete!
+                  </button>
                 )}
             </div>
           </div>
@@ -476,42 +476,7 @@ export default function ViewModule({ id }: { id: string }) {
                 {!collapsedModules.includes(module._id) && (
                   <div className="bg-muted/20">
                     {module.lectures.map(
-                      (
-                        lecture: {
-                          _id: Key | null | undefined;
-                          isUnlocked: any;
-                          isCompleted: any;
-                          title:
-                            | string
-                            | number
-                            | bigint
-                            | boolean
-                            | ReactElement<
-                                unknown,
-                                string | JSXElementConstructor<any>
-                              >
-                            | Iterable<ReactNode>
-                            | ReactPortal
-                            | Promise<
-                                | string
-                                | number
-                                | bigint
-                                | boolean
-                                | ReactPortal
-                                | ReactElement<
-                                    unknown,
-                                    string | JSXElementConstructor<any>
-                                  >
-                                | Iterable<ReactNode>
-                                | null
-                                | undefined
-                              >
-                            | null
-                            | undefined;
-                          pdfNotes: string | any[];
-                        },
-                        lectureIndex: number
-                      ) => (
+                      (lecture: any, lectureIndex: number) => (
                         <div
                           key={lecture._id}
                           className={`p-4 pl-8 border-b border-border/50 cursor-pointer transition-colors ${
