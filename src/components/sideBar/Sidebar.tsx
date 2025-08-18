@@ -108,7 +108,7 @@ const Sidebar = () => {
                 })}
               </ul>
             )}
-            {user.role === "admin" && (
+            {user.role === "user" && (
               <ul className="space-y-2">
                 {menuItems.map((item) => {
                   const Icon = item.icon;

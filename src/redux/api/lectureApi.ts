@@ -12,6 +12,15 @@ export const lectureApi = baseApi.injectEndpoints({
 
       providesTags: ["lecture"],
     }),
+    getAllLectureByClassId: builder.query({
+      query: (arg: Record<string, any>) => ({
+        method: "GET",
+        url: `lecture/module`,
+        params: arg,
+      }),
+
+      providesTags: ["lecture"],
+    }),
     getLectureById: builder.query({
       query: (id: string) => ({
         method: "GET",
@@ -58,4 +67,5 @@ export const {
   useCreateLectureMutation,
   useUpdateLectureMutation,
   useDeleteLectureMutation,
+  useGetAllLectureByClassIdQuery,
 } = lectureApi;
