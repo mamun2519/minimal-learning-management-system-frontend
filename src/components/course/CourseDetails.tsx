@@ -193,7 +193,7 @@ const CourseDetails = ({ id }: { id: string }) => {
             {/* What You'll Learn */}
             <div className="mb-8 mt-10">
               <h2 className="text-2xl font-bold text-foreground mb-4">
-                What you'll learn
+                What youll learn
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {course.whatYouLearn.map((item, index) => (

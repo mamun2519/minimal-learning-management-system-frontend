@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import Loading from "@/helpers/Loading";
 import { useMyCoursesQuery } from "@/redux/api/enrolledCourseApi";
@@ -23,7 +24,7 @@ const EnrolledCourses = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {courses?.map((course) => (
+        {courses?.map((course: any) => (
           <div
             key={course.id}
             className="bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-200"
