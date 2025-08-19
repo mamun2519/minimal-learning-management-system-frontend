@@ -149,13 +149,7 @@ const DashboardLectureView = () => {
       <div className="hidden lg:block overflow-x-auto">
         <table className="w-full">
           <TableHead
-            tableHeadings={[
-              "Module Title",
-              "Course Title",
-              "Total module",
-              "Total lecture",
-              "Action",
-            ]}
+            tableHeadings={["Module Title", "Course Title", "Action"]}
           />
 
           <LectureTableBody lectureData={lectureData} />
@@ -178,16 +172,6 @@ const DashboardLectureView = () => {
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="font-semibold text-card-foreground">
-                      10
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="font-semibold text-card-foreground">
-                      10
-                    </span>
-                  </div>
                   <div className="flex items-center gap-2">
                     <Link
                       href={`/dashboard/all-lecture/edit/${lecture._id}`}

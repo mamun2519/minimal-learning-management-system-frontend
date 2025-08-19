@@ -103,7 +103,7 @@ function Courses({ title, _id, file, price, description }: CourseCardProps) {
           {/* {<PrimaryButton title=" Enroll Now" />}
            */}
           <Link href={`/courseinfo/${_id}`}>
-            <PrimaryButton title="Enroll Now" />
+            <PrimaryButton title="View Details" />
           </Link>
         </div>
       </div>

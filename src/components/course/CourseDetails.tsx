@@ -60,9 +60,9 @@ const CourseDetails = ({ id }: { id: string }) => {
   const [enrolledCourse] = useEnrolledCourseMutation();
   // const user = useAppSelector((state) => state.user.user);
   const user: any = getUserInfo();
-  console.log("user", user);
-  const { data, isLoading } = useGetCourseByIdQuery(id);
 
+  const { data, isLoading } = useGetCourseByIdQuery(id);
+  const userData = useAppSelector((state) => state.user.user);
   if (isLoading) return <Loading />;
   const enrolledCourseHandler = async () => {
     try {
@@ -251,11 +251,21 @@ const CourseDetails = ({ id }: { id: string }) => {
                 {/* Action Buttons */}
                 <div className="space-y-3 mb-6">
                   <button
+                    disabled={!userData?.role}
                     onClick={() => enrolledCourseHandler()}
-                    className="w-full bg-primary hover:bg-primary/90 py-2 rounded text-white    cursor-pointer"
+                    className={`w-full   py-2 rounded text-white    cursor-pointer ${
+                      userData?.role
+                        ? "bg-primary hover:bg-primary/90"
+                        : "bg-red-200"
+                    }`}
                   >
                     Enroll Now
                   </button>
+                  {!userData?.role && (
+                    <span className="text-red-500">
+                      If you enroll the course. Please login first
+                    </span>
+                  )}
                 </div>
 
                 {/* Course Info */}

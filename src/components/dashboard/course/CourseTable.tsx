@@ -148,6 +148,9 @@ const DashboardCourseView = () => {
                     <button className="inline-flex items-center gap-2 px-3 py-1 bg-primary text-primary-foreground rounded-lg text-sm">
                       Add Module
                     </button>
+                    <Link href={`/dashboard/view-module/${course._id}`}>
+                      <Eye className="h-4 w-4" />
+                    </Link>
                     <Link
                       href={`/dashboard/all-course/update-course/${course._id}`}
                       className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg pointer"
@@ -175,7 +178,6 @@ const DashboardCourseView = () => {
           onConfirm={handleDeleteConfirm}
           title="Delete Course"
           description="This will permanently remove the course and all its associated data. This action cannot be undone."
-          itemName={"xyz Course"}
           isLoading={isDeleting}
         />
       )}

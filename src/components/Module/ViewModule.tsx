@@ -339,47 +339,6 @@ export default function ViewModule({ id }: { id: string }) {
               </div>
             </div>
 
-            {/* PDF Notes Section */}
-            {/* {currentLectureData?.pdfNotes &&
-              currentLectureData.pdfNotes.length > 0 && (
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
-                    <FileText className="h-5 w-5" />
-                    PDF Notes
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {currentLectureData.pdfNotes.map(
-                      (
-                        pdf: {
-                          _id: Key | null | undefined;
-                          url: string | undefined;
-                        },
-                        index: number
-                      ) => (
-                        <a
-                          key={pdf._id}
-                          href={pdf.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-3 p-3 bg-card border border-border rounded-lg hover:bg-muted/50 transition-colors"
-                        >
-                          <FileText className="h-8 w-8 text-primary flex-shrink-0" />
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-foreground truncate">
-                              PDF Note {index + 1}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              Click to download
-                            </p>
-                          </div>
-                          <Download className="h-4 w-4 text-muted-foreground" />
-                        </a>
-                      )
-                    )}
-                  </div>
-                </div>
-              )} */}
-
             {/* Action Buttons */}
             <div className="flex flex-wrap gap-3">
               {currentLectureData?.isUnlocked &&

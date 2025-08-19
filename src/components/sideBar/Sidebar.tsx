@@ -32,14 +32,14 @@ const menuItems = [
     href: "/dashboard/add-module",
   },
 
-  { icon: Settings, label: "Home", href: "/" },
+  { icon: Users, label: "Home", href: "/" },
 ];
 
 const userItems = [
   { icon: Home, label: "Dashboard", href: "/dashboard" },
   { icon: BookOpen, label: "My Courses", href: "/dashboard/my-course" },
 
-  { icon: Settings, label: "Home", href: "/" },
+  { icon: Users, label: "Home", href: "/" },
 ];
 
 const Sidebar = () => {
@@ -112,7 +112,7 @@ const Sidebar = () => {
                 })}
               </ul>
             )}
-            {user?.role === "user" && (
+            {user?.role === "admin" && (
               <ul className="space-y-2">
                 {menuItems.map((item) => {
                   const Icon = item.icon;

@@ -10,7 +10,7 @@ export const courseApi = baseApi.injectEndpoints({
         params: arg,
       }),
 
-      providesTags: ["course"],
+      // providesTags: ["course"],
     }),
     getCourseById: builder.query({
       query: (id: string) => ({
@@ -23,10 +23,9 @@ export const courseApi = baseApi.injectEndpoints({
       query: (newCourse) => ({
         url: "course",
         method: "POST",
-        body: newCourse,
-        // headers: {
-        //   "Content-Type": "multipart/form-data",
-        // },
+        data: newCourse,
+
+        contentType: "multipart/form-data",
       }),
       invalidatesTags: ["course"],
     }),

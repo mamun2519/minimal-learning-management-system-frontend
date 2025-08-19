@@ -9,7 +9,8 @@ import Link from "next/link";
 const EnrolledCourses = () => {
   const { data: courses, isLoading } = useMyCoursesQuery({});
   if (isLoading) return <Loading />;
-  console.log("data", courses);
+
+  console.log("courses", courses);
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -33,8 +34,8 @@ const EnrolledCourses = () => {
                 <Image
                   height={50}
                   width={20}
-                  src={course.courseId.file.url || "/placeholder.svg"}
-                  alt={course.title}
+                  src={course?.courseData?.file?.url || "/placeholder.svg"}
+                  alt={course?.courseData?.title}
                   className="w-full h-full "
                 />
               </div>
@@ -43,7 +44,7 @@ const EnrolledCourses = () => {
               <div className="flex-1 p-4 flex flex-col justify-between">
                 <div>
                   <h3 className="font-semibold text-card-foreground text-sm leading-tight mb-1">
-                    {course.courseId.title}
+                    {course.courseData.title}
                   </h3>
                   <p className="text-xs text-muted-foreground mb-3">
                     Mohammad Mamun (dammy text)
@@ -57,13 +58,13 @@ const EnrolledCourses = () => {
                       Progress
                     </span>
                     <span className="text-xs font-medium text-card-foreground">
-                      {course.progress}%
+                      {course?.progressPercent}%
                     </span>
                   </div>
                   <div className="w-full bg-muted rounded-full h-1.5">
                     <div
                       className="bg-primary h-1.5 rounded-full transition-all duration-300"
-                      style={{ width: `${course.progress}%` }}
+                      style={{ width: `${course?.progressPercent}%` }}
                     />
                   </div>
                 </div>

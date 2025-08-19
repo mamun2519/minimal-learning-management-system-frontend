@@ -60,7 +60,6 @@ const ModuleTableBody = ({ moduleData }: ModuleTableBodyProps) => {
 
           <td className="py-4 px-6">
             <div className="flex items-center gap-2">
-              <Eye className="h-4 w-4" />
               <Link
                 href={`/dashboard/all-module/edit/${module._id}`}
                 className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg pointer"

@@ -14,11 +14,12 @@ export const axiosBaseQuery =
       data?: AxiosRequestConfig["data"];
       params?: AxiosRequestConfig["params"];
       contentType?: string;
+      headers?: Record<string, string>;
     },
     unknown,
     unknown
   > =>
-  async ({ url, method, data, params, contentType }) => {
+  async ({ url, method, data, params, contentType, headers }) => {
     try {
       const result = await axiosInstace({
         url: baseUrl + url,
@@ -28,6 +29,12 @@ export const axiosBaseQuery =
         headers: {
           "Content-Type": contentType || "application/json",
         },
+        // headers: {
+        //   ...(contentType !== "multipart/form-data" && {
+        //     "Content-Type": contentType || "application/json",
+        //   }),
+        //   ...headers,
+        // },
       });
 
       return result;

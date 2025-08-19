@@ -8,6 +8,7 @@ import { Upload, X, FileText, DollarSign, Type, FileUp } from "lucide-react";
 import axios from "axios";
 import { URL } from "@/constants/url";
 import Swal from "sweetalert2";
+import { useCreateCourseMutation } from "@/redux/api/courseApi";
 interface CourseFormData {
   title: string;
   price: number;
@@ -27,7 +28,6 @@ const AddNewCourse = () => {
       description: "",
     },
   });
-
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const handleFileSelect = (file: File) => {
@@ -101,6 +101,46 @@ const AddNewCourse = () => {
       });
     }
   };
+
+  // const onSubmit = async (data: CourseFormData) => {
+  //   try {
+  //     const submitData = new FormData();
+  //     const submitPayload = {
+  //       title: data.title,
+  //       price: parseInt(data?.price as any),
+  //       description: data.description,
+  //     };
+  //     submitData.append("data", JSON.stringify(submitPayload));
+  //     if (selectedFile) {
+  //       submitData.append("file", selectedFile);
+  //     }
+
+  //     // const result = await axios.post(`${URL}course`, submitData, {
+  //     //   headers: {
+  //     //     "Content-Type": "multipart/form-data",
+  //     //   },
+  //     // });
+  //     const result = await createCourse(submitPayload);
+  //     console.log("result", result);
+
+  //     if (result.data.success) {
+  //       console.log("Course created successfully:", result);
+  //       Swal.fire({
+  //         title: "Success",
+  //         text: "Course created successfully!",
+  //         icon: "success",
+  //       });
+  //       reset();
+  //       setSelectedFile(null);
+  //     }
+  //   } catch (error) {
+  //     Swal.fire({
+  //       title: "Error",
+  //       text: "Failed to create course. Please try again.",
+  //       icon: "error",
+  //     });
+  //   }
+  // };
 
   return (
     <div className="max-w-4xl mx-auto">

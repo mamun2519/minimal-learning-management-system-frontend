@@ -102,7 +102,7 @@ export default function CourseCard({
                 </span>
               )}
             </div>
-            <button className="bg-primary hover:bg-primary/90">
+            <button className="bg-primary hover:bg-primary/90 cursor-pointer">
               View Details
             </button>
           </div>
