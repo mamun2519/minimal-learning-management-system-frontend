@@ -6,50 +6,6 @@ import { Play, BookOpen } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-interface EnrolledCourse {
-  id: string;
-  title: string;
-  instructor: string;
-  progress: number;
-  thumbnail: string;
-  isCompleted: boolean;
-}
-
-const enrolledCourses: EnrolledCourse[] = [
-  {
-    id: "1",
-    title: "Redux From Beginner Level To Advanced",
-    instructor: "Mir Hossain",
-    progress: 0,
-    thumbnail: "/placeholder.svg?height=120&width=200",
-    isCompleted: false,
-  },
-  {
-    id: "2",
-    title: "Node-Mongo Crash Course",
-    instructor: "Mezbaul Abedin Persian",
-    progress: 0,
-    thumbnail: "/placeholder.svg?height=120&width=200",
-    isCompleted: false,
-  },
-  {
-    id: "3",
-    title: "SCIC-Pro: Job Hunting Battlefield",
-    instructor: "Programming Hero",
-    progress: 100,
-    thumbnail: "/placeholder.svg?height=120&width=200",
-    isCompleted: true,
-  },
-  {
-    id: "4",
-    title: "Special Consideration Course Part 2",
-    instructor: "Programming Hero",
-    progress: 100,
-    thumbnail: "/placeholder.svg?height=120&width=200",
-    isCompleted: true,
-  },
-];
-
 const EnrolledCourses = () => {
   const { data: courses, isLoading } = useMyCoursesQuery({});
   if (isLoading) return <Loading />;
@@ -61,12 +17,12 @@ const EnrolledCourses = () => {
           My Enrolled Courses
         </h2>
         <span className="text-sm text-muted-foreground">
-          {courses.length} courses
+          {courses?.length} courses
         </span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {courses.map((course) => (
+        {courses?.map((course) => (
           <div
             key={course.id}
             className="bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-200"

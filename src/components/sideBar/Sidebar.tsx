@@ -1,5 +1,7 @@
 "use client";
-import { useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -43,8 +45,14 @@ const userItems = [
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const user: any = getUserInfo();
-  // console.log("User Info:", user);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    // Runs only in client
+    const storedUser = getUserInfo();
+    setUser(storedUser);
+  }, []);
+
   return (
     <>
       {/* Mobile menu button */}
@@ -104,7 +112,7 @@ const Sidebar = () => {
                 })}
               </ul>
             )}
-            {user.role === "user" && (
+            {user?.role === "user" && (
               <ul className="space-y-2">
                 {menuItems.map((item) => {
                   const Icon = item.icon;

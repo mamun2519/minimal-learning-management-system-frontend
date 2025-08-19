@@ -5,15 +5,15 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setUser } from "@/redux/Slices/userSlice";
 import { getUserInfo, logOut } from "@/utils/auth";
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dispatch = useAppDispatch();
-  const user: any = getUserInfo();
+  // const user: any = getUserInfo();
   const a = useAppSelector((state) => state.user.user);
-  // Removed incorrect useActionState usage
-  console.log("User Info:", user);
+  // // Removed incorrect useActionState usage
+
   const handleLogout = () => {
     logOut();
     dispatch(setUser({ userId: null, email: null, role: null }));
@@ -43,7 +43,7 @@ export default function Navbar() {
               >
                 About
               </a>
-              {user && (
+              {a.role && (
                 <Link
                   href="/dashboard"
                   className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
@@ -51,7 +51,7 @@ export default function Navbar() {
                   Dashboard
                 </Link>
               )}
-              {user ? (
+              {a.role ? (
                 <button
                   onClick={() => handleLogout()}
                   className=" px-4 py-1 bg-primary text-white rounded  cursor-pointer"
