@@ -73,7 +73,7 @@ const EnrolledCourses = () => {
                 {/* Action Buttons */}
                 <div className="flex gap-2">
                   <Link
-                    href={`/dashboard/view-module/${course?.courseId?._id}`}
+                    href={`/dashboard/view-module/${course?.courseData?._id}`}
                     className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-medium py-2 px-3 rounded-md transition-colors duration-200 flex items-center justify-center gap-1"
                   >
                     {course.isCompleted ? (

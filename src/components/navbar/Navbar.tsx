@@ -14,15 +14,15 @@ type IUser = {
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const dispatch = useAppDispatch();
-  const [user, setUserData] = useState<IUser>();
-  // const user: any = getUserInfo();
+  // const [user, setUserData] = useState<IUser>();
+  const user: any = getUserInfo();
   // const a = useAppSelector((state) => state.user.user);
   // // // Removed incorrect useActionState usage
 
-  useEffect(() => {
-    const userInfo: any = getUserInfo();
-    setUserData(userInfo);
-  }, [user]);
+  // useEffect(() => {
+  //   const userInfo: any = getUserInfo();
+  //   setUserData(userInfo);
+  // }, [user]);
   const handleLogout = () => {
     logOut();
     dispatch(setUser({ userId: null, email: null, role: null }));
