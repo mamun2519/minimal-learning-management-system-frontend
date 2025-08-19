@@ -127,7 +127,7 @@ export default function Navbar() {
               >
                 About
               </a>
-              {a.role && (
+              {user?.role && (
                 <Link
                   href="/dashboard"
                   className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
@@ -135,7 +135,7 @@ export default function Navbar() {
                   Dashboard
                 </Link>
               )}
-              {!a.role ? (
+              {!user?.role ? (
                 <button
                   onClick={() => handleLogout()}
                   className=" px-4 py-1 bg-primary text-white rounded  cursor-pointer"
