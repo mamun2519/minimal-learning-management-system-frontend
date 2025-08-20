@@ -1,11 +1,11 @@
-import InToCourse from "@/components/course/InToCourse";
 import Navbar from "@/components/navbar/Navbar";
 
 function Home() {
   return (
     <div>
       <Navbar />
-      <InToCourse />
+
+      <p>Hello world</p>
     </div>
   );
 }
