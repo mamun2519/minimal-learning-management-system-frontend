@@ -1,0 +1,28 @@
+name: Features Release
+on:
+  workflow_run:
+    workflows: ["Deploy Application to Production"]
+    types:
+      - completed
+jobs:
+  release:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Branch code
+        uses: actions/checkout@v3
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Release v${{ github.run_number }}
+          body: |
+            🚀 **New Release Published**
+            - Version: `v${{ github.event.workflow_run.run_number }}`
+            - Docker Image: `${{ secrets.DOCKERHUB_USERNAME }}/lms-frontend:v${{ github.event.workflow_run.run_number }}`
+            - Deployed: ${{ github.event.workflow_run.updated_at }}
+
+            View workflow run: ${{ github.event.workflow_run.html_url }}
+          generate_release_notes: true # GitHub automatically generates notes
+          env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
