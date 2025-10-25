@@ -5,7 +5,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import Swal from "sweetalert2";
 import DeleteModal from "../ui/DeleteModal";
-import { useDeleteLectureMutation } from "@/redux/api/lectureApi";
+// import { useDeleteLectureMutation } from "@/redux/api/lectureApi";
 
 interface LectureTableBodyProps {
   lectureData: any[]; // Replace 'any' with the actual type of your lecture data
@@ -13,7 +13,7 @@ interface LectureTableBodyProps {
 const LectureTableBody = ({ lectureData }: LectureTableBodyProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [id, setId] = useState<string>("");
-  const [deleteLecture, {}] = useDeleteLectureMutation();
+  const [deleteLecture, {}] = useDeleteCourseMutation();
 
   const handleDeleteConfirm = async () => {
     const response = await deleteLecture(id);
@@ -68,7 +68,7 @@ const LectureTableBody = ({ lectureData }: LectureTableBodyProps) => {
                 <Edit className="h-4 w-4" />
               </Link>
               <button
-                onClick={() => handleDeleteClick(lecture._id)}
+                // onClick={() => handleDeleteClick(lecture._id)}
                 className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg"
               >
                 <Trash className="h-4 w-4" />

@@ -1,5 +1,5 @@
 #stage 1: build the react app
-FROM node:18-alpine as build
+FROM node:22-alpine as build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
@@ -13,9 +13,9 @@ RUN npm run build
 # CMD ["nginx", "-g", "daemon off;"]
 
 #stage 2: runtime environment
-FROM node:18-alpine
+FROM node:22-alpine as runtime
 WORKDIR /app
-COPY --from=build /app/build ./build
+COPY --from=build /app ./
 # Install a simple static file server
 RUN npm install -g serve
 EXPOSE 3000

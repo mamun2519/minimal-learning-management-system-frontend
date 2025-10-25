@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useDeleteModuleMutation } from "@/redux/api/moduleApi";
+// import { useDeleteModuleMutation } from "@/redux/api/moduleApi";
 import { Edit, Eye, Trash } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 import Swal from "sweetalert2";
 import DeleteModal from "../ui/DeleteModal";
+import { useDeleteCourseMutation } from "@/redux/api/courseApi";
 
 interface ModuleTableBodyProps {
   moduleData: any[]; // Replace 'any' with the actual type of your module data
@@ -12,7 +13,7 @@ interface ModuleTableBodyProps {
 const ModuleTableBody = ({ moduleData }: ModuleTableBodyProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [id, setId] = useState<string>("");
-  const [deleteModule, {}] = useDeleteModuleMutation();
+  const [deleteModule, {}] = useDeleteCourseMutation();
 
   const handleDeleteConfirm = async () => {
     const response = await deleteModule(id);
