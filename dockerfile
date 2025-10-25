@@ -18,7 +18,7 @@ WORKDIR /app
 COPY --from=build /app/build ./build
 # Install a simple static file server
 RUN npm install -g serve
-EXPOSE 5000
-CMD ["serve", "-s", "build", "-l", "5000"]
+EXPOSE 3000
+CMD ["npm" "start"]
 
 #docker build -t my-react-app .
