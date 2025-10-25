@@ -1,5 +1,5 @@
-name: Continuous Integration 
-on: 
+name: Continuous Integration
+on:
   push:
     branches: ["main"]
   pull_request:
@@ -9,19 +9,17 @@ jobs:
   ci_tests:
     runs-on: ubuntu-latest
     steps:
-      -name: Checkout Branch code
-      uses: actions/checkout@v3
-      -name: SetUp Node job
-      uses: actions/setup-node@v3
-      with:
-        node-version: '22'
-      -name: Install Dependencies
-      run: npm install
+      - name: Checkout Branch code
+        uses: actions/checkout@v3
+      - name: SetUp Node job
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+      - name: Install Dependencies
+        run: npm install
       # -name: Run Tests
       # run: npm test
-      -name: lint check 
-      run: npm run lint
-      -name: build check
-      run: npm run build
-      -name: upload production ready code artifact
-      
+      - name: lint check
+        run: npm run lint
+      - name: build check
+        run: npm run build
