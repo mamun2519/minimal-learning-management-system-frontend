@@ -19,6 +19,6 @@ COPY --from=build /app ./
 # Install a simple static file server
 RUN npm install -g serve
 EXPOSE 3000
-CMD ["npm" "start"]
+CMD ["npm", "start"]
 
 #docker build -t my-react-app .
