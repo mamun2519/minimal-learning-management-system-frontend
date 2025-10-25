@@ -27,3 +27,17 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/lms-frontend:${{ env.IMAGE_TAG }}
+      # - name: Deploy to Production Server
+      #   uses: easingthemes/ssh-deploy@v2.1.5
+      #   with:
+      #     ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     remote-user: ${{ secrets.REMOTE_USER }}
+      #     server-ip: ${{ secrets.SERVER_IP }}
+      #     remote-path: ${{ secrets.REMOTE_PATH }}
+      #     local-path: .
+      #     pre-deploy-command: |
+      #       docker pull ${{ secrets.DOCKERHUB_USERNAME }}/lms-frontend:${{ env.IMAGE_TAG }}
+      #     deploy-command: |
+      #       docker stop lms-frontend || true
+      #       docker rm lms-frontend || true
+      #       docker run -d --name lms-frontend -p 80:80 ${{ secrets.DOCKERHUB_USERNAME }}/lms-frontend:${{ env.IMAGE_TAG }}
