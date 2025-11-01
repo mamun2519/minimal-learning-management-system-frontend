@@ -1,12 +1,16 @@
 {
   "name": "minimal-learning-management-system-frontend",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+     "version:major": "npm version major",
+    "version:minor": "npm version minor",
+    "version:patch": "npm version patch",
+    "release": "npm run version:patch && git push --follow-tags"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

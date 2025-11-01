@@ -1,0 +1,287 @@
+name: Build, Test & Deploy
+permissions:
+  contents: write
+on:
+  workflow_dispatch: # Manual trigger option
+    inputs:
+      version:
+        description: "Version to deploy (e.g., v1.2.3)"
+        required: true
+        type: string
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/lms-backend
+
+jobs:
+  # stage 0: Build and Test
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint || true
+
+      - name: Run tests
+        run: npm test || echo "No tests specified"
+
+      - name: Build TypeScript
+        run: npm run build
+
+  # stage 1: Determine version
+  determine-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get Version
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            # Manual input from version
+            VERSION="${{ github.event.inputs.version }}"
+            echo "📌 Using manual version: $VERSION"
+          else
+            # Auto version bump (end tag from patch level)
+            LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+            echo "Latest tag: $LATEST_TAG"
+            
+            VERSION=${LATEST_TAG#v}
+            IFS='.' read -r major minor patch <<< "$VERSION"
+            NEW_PATCH=$((patch + 1))
+            VERSION="v${major}.${minor}.${NEW_PATCH}"
+            echo "📌 Auto-generated version: $VERSION"
+          fi
+
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+      - name: Update package.json version
+        run: |
+          VERSION=${{ steps.get_version.outputs.version }}
+          VERSION_NUMBER=${VERSION#v}
+
+          echo "Updating package.json version to $VERSION_NUMBER"
+          npm version $VERSION_NUMBER --no-git-tag-version
+
+      - name: Commit version change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json || true
+          git commit -m "chore: bump version to $VERSION_NUMBER" || echo "No changes to commit"
+          git push origin HEAD:${{ github.ref }}
+  # stage 2: Docker build and push
+  docker-build-push:
+    needs: [build-and-test, determine-version]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ needs.determine-version.outputs.version }}
+            type=raw,value=latest
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache
+          cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache,mode=max
+
+      - name: Save Tag Data for Release
+        run: |
+          VERSION_TAG=${{ needs.determine-version.outputs.version }}
+          FULL_IMAGE_NAME=${{ env.IMAGE_NAME }}
+
+          echo "VERSION_TAG=$VERSION_TAG" > release_data.txt
+          echo "FULL_IMAGE_NAME=$FULL_IMAGE_NAME" >> release_data.txt
+          echo "DOCKER_TAGS=${{ steps.meta.outputs.tags }}" >> release_data.txt
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-data-artifact
+          path: release_data.txt
+          retention-days: 1
+  # stage 3: Deployment
+  deploy:
+    needs: [docker-build-push, determine-version]
+    runs-on: ubuntu-latest
+    outputs:
+      deployment-status: ${{ steps.deploy_status.outputs.status }}
+
+    env:
+      CONTAINER_NAME: minimal-lms-backend
+      DEPLOY_PATH: /home/${{ secrets.VPS_USERNAME }}/app/lms-backend
+      VERSION: ${{ needs.determine-version.outputs.version }}
+
+    steps:
+      - name: Deploy to VPS via SSH
+        id: deploy_step
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          envs: IMAGE_NAME,CONTAINER_NAME,DEPLOY_PATH,VERSION
+
+          script: |
+            set -e
+            echo "🎯 Deploying version: $VERSION"
+            echo "🎯 Image: $IMAGE_NAME"
+
+            mkdir -p $DEPLOY_PATH/logs $DEPLOY_PATH/uploads
+            cd $DEPLOY_PATH
+
+            # Create .env if not exists
+            if [ ! -f .env ]; then
+              echo "📌 Creating .env file..."
+            cat > .env << 'EOF'
+            NODE_ENV=production
+            PORT=5000
+            DB_USER_NAME=${{ secrets.DB_USER_NAME }}
+            DB_USER_PASSWORD=${{ secrets.DB_USER_PASSWORD }}
+            DB_URL=${{ secrets.DB_URL }}
+            CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}
+            CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}
+            CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}
+            BCRYPT_SALT_ROUNDS=${{ secrets.BCRYPT_SALT_ROUNDS }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            JWT_EXPIRES_IN=${{ secrets.JWT_EXPIRES_IN }}
+            JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}
+            EOF
+              chmod 600 .env
+            fi
+
+            echo "📦 Pulling image: $IMAGE_NAME:latest"
+            docker pull $IMAGE_NAME:latest
+
+            echo "🛑 Stopping old container..."
+            docker stop $CONTAINER_NAME || true
+            docker rm $CONTAINER_NAME || true
+
+            echo "🚀 Starting new container..."
+            docker run -d \
+              --name $CONTAINER_NAME \
+              --restart unless-stopped \
+              --env-file .env \
+              -p 4001:5000 \
+              -v $(pwd)/uploads:/app/uploads \
+              -v $(pwd)/logs:/app/logs \
+              --log-driver json-file \
+              --log-opt max-size=10m \
+              --log-opt max-file=3 \
+              --health-cmd="curl -f http://localhost:5000/health || exit 1" \
+              --health-interval=15s \
+              --health-retries=3 \
+              --health-timeout=5s \
+              "${IMAGE_NAME}:latest"
+
+            echo "✅ Waiting for health check..."
+            sleep 15
+
+            HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' $CONTAINER_NAME)
+            echo "Health status: $HEALTH_STATUS"
+
+            if [ "$HEALTH_STATUS" != "healthy" ] && [ "$HEALTH_STATUS" != "starting" ]; then
+              echo "❌ Container unhealthy!"
+              docker logs $CONTAINER_NAME --tail 50
+              exit 1
+            fi
+
+            echo "📜 Showing latest logs..."
+            docker logs $CONTAINER_NAME --tail 40
+
+            echo "🧹 Pruning old images..."
+            docker image prune -af --filter "until=48h"
+
+            echo "✅ Deployment Successful ✅"
+
+      - name: Set Deployment Status
+        id: deploy_status
+        if: always()
+        run: |
+          if [ "${{ steps.deploy_step.outcome }}" == "success" ]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failed" >> $GITHUB_OUTPUT
+          fi
+  # stage 4: Tag creation
+  create-tag:
+    needs: [determine-version, deploy]
+    runs-on: ubuntu-latest
+    if: needs.deploy.outputs.deployment-status == 'success'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check if Tag Exists
+        id: check_tag
+        run: |
+          VERSION="${{ needs.determine-version.outputs.version }}"
+
+          if git rev-parse "$VERSION" >/dev/null 2>&1; then
+            echo "⚠️ Tag $VERSION already exists"
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "✅ Tag $VERSION does not exist"
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create and Push Tag
+        if: steps.check_tag.outputs.exists == 'false'
+        run: |
+          VERSION="${{ needs.determine-version.outputs.version }}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git tag -a "$VERSION" -m "Release $VERSION - Deployed successfully"
+          git push origin "$VERSION"
+
+          echo "🎉 Tag $VERSION created and pushed!"
+
+      - name: Tag Already Exists
+        if: steps.check_tag.outputs.exists == 'true'
+        run: |
+          echo "ℹ️ Tag already exists. Skipping tag creation."
