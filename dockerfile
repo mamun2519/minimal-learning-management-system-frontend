@@ -1,26 +1,30 @@
-#stage 1: build the react app
-FROM node:22-alpine as builder
+# Stage 1: Build the Next.js app
+FROM node:22-alpine AS build
 WORKDIR /app
+
+# Install dependencies
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm ci
+
+# Copy the source code
 COPY . .
+
+# Build the app
 RUN npm run build
 
-# stage 2: serve the react app with nginx (Production stage)
-FROM nginx:alpine
+# Stage 2: Run the app
+FROM node:22-alpine AS runner
+WORKDIR /app
 
-COPY --from=builder /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+ENV NODE_ENV=production
 
-#stage 2: runtime environment
-# FROM node:22-alpine as runtime
-# WORKDIR /app
-# COPY --from=build /app ./
-# # Install a simple static file server
-# RUN npm install -g serve
-# EXPOSE 3000
-# CMD ["npm", "start"]
+# Copy necessary files from the build stage
+COPY --from=build /app/public ./public
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/package.json ./package.json
 
-#docker build -t my-react-app .
+# Expose Next.js default port
+EXPOSE 3000
+
+# Start the app
+CMD ["npm", "start"]
