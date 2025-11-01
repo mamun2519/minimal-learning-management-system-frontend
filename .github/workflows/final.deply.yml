@@ -11,7 +11,7 @@ on:
 
 env:
   REGISTRY: docker.io
-  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/lms-backend
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/lms-frontend
 
 jobs:
   # stage 0: Build and Test
@@ -147,8 +147,8 @@ jobs:
       deployment-status: ${{ steps.deploy_status.outputs.status }}
 
     env:
-      CONTAINER_NAME: minimal-lms-backend
-      DEPLOY_PATH: /home/${{ secrets.VPS_USERNAME }}/app/lms-backend
+      CONTAINER_NAME: minimal-lms-frontend
+      DEPLOY_PATH: /home/${{ secrets.VPS_USERNAME }}/app/lms-frontend
       VERSION: ${{ needs.determine-version.outputs.version }}
 
     steps:
