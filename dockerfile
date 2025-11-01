@@ -19,9 +19,12 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # Copy necessary files from the build stage
-COPY --from=build /app/public ./public
+# Copy everything needed from build stage
+COPY --from=build /app/package*.json ./
 COPY --from=build /app/.next ./.next
-COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/public ./public
+COPY --from=build /app/node_modules ./node_modules
+
 
 # Expose Next.js default port
 EXPOSE 3000
