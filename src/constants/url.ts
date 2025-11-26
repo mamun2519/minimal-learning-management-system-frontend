@@ -2,3 +2,4 @@
 // export const URL =
 //   "https://minimal-learning-management-system.vercel.app/api/v1/";
 export const URL = process.env.NEXT_PUBLIC_API_URL;
+console.log("API URL:", URL);
